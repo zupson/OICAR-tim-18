@@ -16,7 +16,8 @@ CREATE TABLE [User](
 	Email NVARCHAR(150) NOT NULL,
 	Username NVARCHAR(100) NOT NULL,
 	PasswordHash NVARCHAR(200) NOT NULL,
-	PasswordSalt NVARCHAR(200) NOT NULL
+	PasswordSalt NVARCHAR(200) NOT NULL,
+	IsDeleted BIT NOT NULL DEFAULT 0
 )
 GO
 
@@ -35,15 +36,18 @@ GO
 CREATE TABLE [Group](
 	Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[Name] NVARCHAR(50) NOT NULL,
-	IsPersonal BIT NOT NULL DEFAULT 0
+	IsPersonal BIT NOT NULL DEFAULT 0,
+	IsDeleted BIT NOT NULL DEFAULT 0
 )
 GO
 
 CREATE TABLE Invitation(
 	Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+	Email NVARCHAR(150) NOT NULL,
 	Token NVARCHAR(150) NOT NULL,
 	ClaimedAt DATETIME NULL,
 	ExpiredAt DATETIME NOT NULL,
+	IsDeleted BIT NOT NULL DEFAULT 0,
 
 	GroupId INT NOT NULL,
 	CONSTRAINT FK_Invitation_Group FOREIGN KEY (GroupId) REFERENCES [Group](Id),
@@ -55,7 +59,6 @@ GO
 
 
 --junction table USER <->GROUP 
-
 CREATE TABLE UserGroup(
 	Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	UserId INT NOT NULL,
@@ -65,20 +68,16 @@ CREATE TABLE UserGroup(
 	CONSTRAINT FK_UserGroup_Group FOREIGN KEY (GroupId) REFERENCES [Group](Id),
 
 	JoinedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
-	InvitationId INT UNIQUE NULL, --jer ako je user koji je samostalan ili je kretor grupe,
-									--ne treba mu toke za uæi u grupu
 
+	InvitationId INT UNIQUE NULL,
 	CONSTRAINT FK_UserGroup_Invitation FOREIGN KEY (InvitationId) REFERENCES Invitation(Id)
 )
 GO
 
-
-
-
 CREATE TABLE Currency(
 	Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[Name] NVARCHAR(50) NOT NULL,
-	CurrencyExcangeRate DECIMAL NOT NULL
+	Code NVARCHAR(50) NOT NULL
 )
 GO
 
@@ -99,22 +98,16 @@ CREATE TABLE Budget(
 	Amount DECIMAL NOT NULL,
 	[Year] INT NOT NULL,
 	[Month] INT NOT NULL,
+	IsDeleted BIT NOT NULL DEFAULT 0,
 
-	
 	UserGroupId INT NOT NULL,
 	CurrencyId INT NOT NULL,
-	CostTypeId INT NOT NULL,
-	RevenueTypeId INT NOT NULL,
 
-	
     CONSTRAINT FK_Budget_UserGroup FOREIGN KEY (UserGroupId) REFERENCES UserGroup(Id),
 	CONSTRAINT FK_Budget_Currency FOREIGN KEY (CurrencyId) REFERENCES Currency(Id),
-	CONSTRAINT FK_Budget_CostType FOREIGN KEY (CostTypeId) REFERENCES CostType(Id),
-	CONSTRAINT FK_Budget_RevenueType FOREIGN KEY (RevenueTypeId) REFERENCES RevenueType(Id),
-	CONSTRAINT UQ_Budget UNIQUE (UserGroupId, CostTypeId, RevenueTypeId, [Month], [Year])
+	CONSTRAINT UQ_Budget UNIQUE (UserGroupId, [Month], [Year])
 )
 GO
-
 
 
 CREATE TABLE Cost(
@@ -122,6 +115,7 @@ CREATE TABLE Cost(
 	Amount DECIMAL NOT NULL,
 	TransactionDate DATETIME NOT NULL DEFAULT SYSDATETIME(),
 	Notes NVARCHAR(MAX) NULL,
+	IsDeleted BIT NOT NULL DEFAULT 0,
 
 	UserId INT NOT NULL,
 	CurrencyId INT NOT NULL,
@@ -129,23 +123,19 @@ CREATE TABLE Cost(
 
 	CONSTRAINT FK_Cost_UserGroup FOREIGN KEY (UserId) REFERENCES [User](Id),
 	CONSTRAINT FK_Cost_Currency FOREIGN KEY (CurrencyId) REFERENCES Currency(Id),
-	CONSTRAINT FK_Cost_CostType FOREIGN KEY (CostTypeId) REFERENCES CostType(Id),
+	CONSTRAINT FK_Cost_CostType FOREIGN KEY (CostTypeId) REFERENCES CostType(Id)
 )
 GO
 
 
-
 --junction table GROUP <-> COST
-
 CREATE TABLE GroupCost(
 	GroupId INT NOT NULL,
 	CostId INT NOT NULL,	
-	UserId INT NOT NULL,
 
 	CONSTRAINT PK_GroupCost PRIMARY KEY(GroupId, CostId),
 	CONSTRAINT FK_GroupCost_Group FOREIGN KEY (GroupId) REFERENCES [Group](Id),
-	CONSTRAINT FK_GroupCost_Cost FOREIGN KEY (CostId) REFERENCES Cost(Id),
-	CONSTRAINT FK_GroupCost_User FOREIGN KEY (UserId) REFERENCES [User](Id)
+	CONSTRAINT FK_GroupCost_Cost FOREIGN KEY (CostId) REFERENCES Cost(Id)
 )
 GO
 
@@ -155,6 +145,7 @@ CREATE TABLE Revenue(
 	Amount DECIMAL NOT NULL,
 	TransactionDate DATETIME NOT NULL DEFAULT SYSDATETIME(),
 	Notes NVARCHAR(MAX) NULL,
+	IsDeleted BIT NOT NULL DEFAULT 0,
 
 	UserId INT NOT NULL,
 	CurrencyId INT NOT NULL,
@@ -162,20 +153,17 @@ CREATE TABLE Revenue(
 
 	CONSTRAINT FK_Revenue_UserGroup FOREIGN KEY (UserId) REFERENCES [User](Id),
 	CONSTRAINT FK_Revenue_Currency FOREIGN KEY (CurrencyId) REFERENCES Currency(Id),
-	CONSTRAINT FK_Revenue_RevenueType FOREIGN KEY (RevenueTypeId) REFERENCES RevenueType(Id),
+	CONSTRAINT FK_Revenue_RevenueType FOREIGN KEY (RevenueTypeId) REFERENCES RevenueType(Id)
 )
 GO
 
 --junction table GROUP <-> REVENUE
-
 CREATE TABLE GroupRevenue(
 	GroupId INT NOT NULL,
 	RevenueId INT NOT NULL,	
-	UserId INT NOT NULL,
 
 	CONSTRAINT PK_GroupRevenue PRIMARY KEY(GroupId, RevenueId),
 	CONSTRAINT FK_GroupRevenue_Group FOREIGN KEY (GroupId) REFERENCES [Group](Id),
-	CONSTRAINT FK_GroupRevenue_Cost FOREIGN KEY (RevenueId) REFERENCES Revenue(Id),
-	CONSTRAINT FK_GroupRevenue_User FOREIGN KEY (UserId) REFERENCES [User](Id)
+	CONSTRAINT FK_GroupRevenue_Cost FOREIGN KEY (RevenueId) REFERENCES Revenue(Id)
 )
 GO
