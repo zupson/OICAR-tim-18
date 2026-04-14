@@ -1,0 +1,6 @@
+@SpendlyWebAPI_HostAddress = http://localhost:5153
+
+GET {{SpendlyWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
