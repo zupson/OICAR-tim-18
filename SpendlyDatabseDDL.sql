@@ -167,3 +167,6 @@ CREATE TABLE GroupRevenue(
 	CONSTRAINT FK_GroupRevenue_Cost FOREIGN KEY (RevenueId) REFERENCES Revenue(Id)
 )
 GO
+
+INSERT INTO [dbo].[Role] ([Name]) VALUES ('User')
+INSERT INTO [dbo].[Role] ([Name]) VALUES ('Admin')
