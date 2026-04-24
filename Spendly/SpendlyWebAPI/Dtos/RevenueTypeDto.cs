@@ -4,13 +4,15 @@ namespace SpendlyWebAPI.Dtos
 {
     public class CreateRevenueTypeDto
     {
+        [Required]
         [MaxLength(150)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
     public class EditRevenueTypeDto
     {
+        [Required]
         [MaxLength(150)]
-        public string? Name { get; set; }
+        public string Name { get; set; }
     }
     public class ResponseRevenueTypeDto
     {

@@ -4,10 +4,9 @@ namespace SpendlyWebAPI.Dtos
 {
     public class CreateInvitationDto
     {
+        [Required]
         [EmailAddress]
-        public required string Email { get; set; }
-
-        public required int GroupId { get; set; }
+        public  string Email { get; set; }
     }
 
     public class ResponseInvitationDto
@@ -20,6 +19,5 @@ namespace SpendlyWebAPI.Dtos
         public int GroupId { get; set; }
         public string? GroupName { get; set; } 
         public int CreatedByUserId { get; set; }
-        public string? CreatedByUserName { get; set; }
     }
 }

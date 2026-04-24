@@ -1,25 +1,27 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using SpendlyWebAPI.Constants;
+﻿using Microsoft.EntityFrameworkCore;
 using SpendlyWebAPI.Dal.Repo;
 using SpendlyWebAPI.Dtos;
+using SpendlyWebAPI.Enums;
 using SpendlyWebAPI.Models;
 using SpendlyWebAPI.Security;
-using System;
+using System.Security.Claims;
 
 namespace SpendlyWebAPI.Services
 {
     public class UserService : IAuthentication<ResponseUserDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
         private readonly IConfiguration _configuration;
-        private readonly ISqlRepository<ResponseRoleDto, CreateRoleDto, EditRoleDto> _role;
-        public UserService(SpendlyContext context, IConfiguration configuration, ISqlRepository<ResponseRoleDto, CreateRoleDto, EditRoleDto> role)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserService(SpendlyDbContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
-            _role = role;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        private int GetCurrntUserId()
+            => int.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -39,7 +41,7 @@ namespace SpendlyWebAPI.Services
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
             if (user == null) return false;
 
-            user.FistName = dto.FirstName;
+            user.FirstName = dto.FirstName;
             user.LastName = dto.LastName;
             user.Email = dto.Email;
             user.Username = dto.Username;
@@ -55,7 +57,7 @@ namespace SpendlyWebAPI.Services
                 .Select(u => new ResponseUserDto
                 {
                     Id = u.Id,
-                    FirstName = u.FistName,
+                    FirstName = u.FirstName,
                     LastName = u.LastName,
                     Email = u.Email,
                     Username = u.Username
@@ -65,11 +67,11 @@ namespace SpendlyWebAPI.Services
         public async Task<ResponseUserDto?> GetByIdAsync(int id)
         {
             return await _context.Users
-                .Where(u => !u.IsDeleted)
+                .Where(u => u.Id == id && !u.IsDeleted)
                 .Select(u => new ResponseUserDto
                 {
                     Id = u.Id,
-                    FirstName = u.FistName,
+                    FirstName = u.FirstName,
                     LastName = u.LastName,
                     Email = u.Email,
                     Username = u.Username
@@ -78,56 +80,55 @@ namespace SpendlyWebAPI.Services
 
         public async Task<(ResponseUserDto user, string token)> LoginAsync(LoginUserDto dto)
         {
-            var salt = PasswordHashProvider.GetSalt();
-            string hash = PasswordHashProvider.GetHash(dto.Password, salt);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
+            if (user == null) throw new KeyNotFoundException("Wrong password");
 
-            var user = await _context.Users
-                .Include(p => p.Roles)
-                .FirstOrDefaultAsync(x => x.Username == dto.Username);
+            var userGroup = await _context.UserGroups
+                .Where(ug => ug.UserId == user.Id)
+                .OrderByDescending(ug => ug.Role)
+                .FirstOrDefaultAsync();
 
-            if (user == null)
-                throw new KeyNotFoundException("Wrong password");
+            var role = userGroup != null ? (Role)userGroup.Role : Role.GeneralAdmin;
+
 
             var b64hash = PasswordHashProvider.GetHash(dto.Password, user.PasswordSalt);
-            if (b64hash != user.PasswordHash)
-                throw new ArgumentException("Wrong password");
+            if (b64hash != user.PasswordHash) throw new ArgumentException("Wrong password");
 
             string? secureKey = _configuration[key: "JWT:SecureKey"];
+            if (secureKey == null) throw new Exception("Something went wrong with token");
 
-            var roleFromDb = await _role.GetAllAsync();
+            var JWT = JwtProvider.CreateToken(
+                secureKey,
+                60,
+                role,
+                user.Id
+            );
 
-            var jwt = JwtProvider.CreateToken(secureKey, 60, roleFromDb, dto.Username);
-
-
-            var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
 
             ResponseUserDto responseUserDto = new ResponseUserDto
             {
-                Id = currentUser.Id,
-                FirstName = currentUser.FistName,
-                LastName = currentUser.LastName,
-                Email = currentUser.Email,
-                Username = currentUser.Username,
-                Roles = currentUser.Roles.Select(r => new ResponseRoleDto
-                {
-                    Id = r.Id,
-                    Name = r.Name
-                }).ToList()
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Username = user.Username,
             };
 
-            return (responseUserDto, jwt);
+            return (responseUserDto, JWT);
         }
 
         public async Task<bool> PasswordChangeAsync(ChangePasswordDto dto)
         {
-            string trimmedUsername = dto.Username.Trim();
-            var existedUsername = await _context.Users.FirstOrDefaultAsync(u=> u.Username.Equals(trimmedUsername));
+            int userId = GetCurrntUserId();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+            if (user == null) return false;
 
-            if (existedUsername == null || existedUsername.IsDeleted)
-                return false;
+            string currentPasswordHash = PasswordHashProvider.GetHash(dto.CurrentPassword, user.PasswordSalt);
 
-            existedUsername.PasswordSalt = PasswordHashProvider.GetSalt();
-            existedUsername.PasswordHash = PasswordHashProvider.GetHash(dto.Password, existedUsername.PasswordSalt);
+            if (currentPasswordHash != user.PasswordHash) throw new Exception("Wrong current password");
+
+            user.PasswordSalt = PasswordHashProvider.GetSalt();
+            user.PasswordHash = PasswordHashProvider.GetHash(dto.Password, user.PasswordSalt);
 
             await _context.SaveChangesAsync();
             return true;
@@ -135,51 +136,79 @@ namespace SpendlyWebAPI.Services
 
         public async Task<(ResponseUserDto user, string token)> RegisterAsync(RegisterUserDto dto)
         {
+            var newUser = CreateNewUserAccount(dto);
+            await _context.SaveChangesAsync();
+
+            var group = CreatePersonalGroupForNewUser(newUser);
+            await _context.SaveChangesAsync();
+
+            var userGroup = ConnectNewUserWithHisPersonalGroup(newUser, group);
+
+            await _context.SaveChangesAsync();
+
+            var secureKey = _configuration[key: "JWT:SecureKey"];
+            if (secureKey == null) throw new Exception("Something went wrong with token");
+
+            string JWT = JwtProvider.CreateToken(
+                secureKey,
+                60,
+                (Role)userGroup.Role,
+                newUser.Id
+            );
+
+            var responsePersonDto = new ResponseUserDto
+            {
+                Id = newUser.Id,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Email = newUser.Email,
+                Username = newUser.Username,
+            };
+
+            return (responsePersonDto, JWT);
+        }
+
+        private UserGroup ConnectNewUserWithHisPersonalGroup(User newUser, Group group)
+        {
+            var userGroup = new UserGroup
+            {
+                UserId = newUser.Id,
+                GroupId = group.Id,
+                Role = (int)Role.User,  // Role se pohranjuje kao int, no za JWT koristimo string
+                JoinedAt = DateTime.UtcNow
+            };
+            _context.UserGroups.Add(userGroup);
+            return userGroup;
+        }
+
+        private Group CreatePersonalGroupForNewUser(User newUser)
+        {
+            var group = new Group
+            {
+                Name = $"{newUser.Username}'s group"
+            };
+
+            _context.Groups.Add(group);
+            return group;
+        }
+
+        private User CreateNewUserAccount(RegisterUserDto dto)
+        {
             var salt = PasswordHashProvider.GetSalt();
             var hash = PasswordHashProvider.GetHash(dto.Password, salt);
 
             var newUser = new User
             {
-                FistName = dto.FirstName,
+                FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Username = dto.Username,
-                
             };
             newUser.PasswordHash = hash;
             newUser.PasswordSalt = salt;
 
-            var userRole = await _context.Roles
-                .FirstOrDefaultAsync(r => r.Name == Roles.User);
-
-            newUser.Roles.Add(userRole);
-
             _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-
-            var rolesFromDb = await _role.GetAllAsync();
-            var secureKey = _configuration[key: "JWT:SecureKey"];
-            if (secureKey == null)
-                throw new Exception("Something went wrong with token");
-
-            string JWT = JwtProvider.CreateToken(secureKey,60,rolesFromDb,dto.Username);
-
-            var responsePersonDto =new ResponseUserDto
-            {
-                Id = newUser.Id,
-                FirstName = newUser.FistName,
-                LastName = newUser.LastName,
-                Email = newUser.Email,
-                Username = newUser.Username,
-                Roles = newUser.Roles.Select(r => new ResponseRoleDto
-                {
-                    Id = r.Id,
-                    Name = r.Name
-                }).ToList()
-            };
-
-            return (responsePersonDto, JWT);
+            return newUser;
         }
     }
 }

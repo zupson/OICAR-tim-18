@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SpendlyWebAPI.Constants;
 using SpendlyWebAPI.Dal.Repo;
 using SpendlyWebAPI.Dtos;
 
@@ -16,7 +15,7 @@ namespace SpendlyWebAPI.Controllers
             _userService = userService;
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseUserDto>>> GetAllUssers()
         {
@@ -31,7 +30,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseUserDto>> GetUserById(int id)
         {
@@ -104,8 +103,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]")]
         public async Task<ActionResult<ChangePasswordDto>> ChangePassword(ChangePasswordDto dto)
         {
@@ -120,7 +118,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpPut("[action]")]
         public async Task<IActionResult> EditPerson(int id, EditUserDto dto)
         {
@@ -143,8 +141,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

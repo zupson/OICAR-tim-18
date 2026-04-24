@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -15,6 +16,7 @@ namespace SpendlyWebAPI.Controllers
             _revenueService = revenueService;
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseRevenueDto>>> GetAllRevenues()
         {
@@ -29,6 +31,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseRevenueDto>> GetRevenueById(int id)
         {
@@ -43,15 +46,16 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ResponseRevenueDto>> CreateNewRevenue(CreateRevenueDto dto)
+        [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpPost("[action]/{groupId}")]
+        public async Task<ActionResult<ResponseRevenueDto>> CreateNewRevenue(int groupId, CreateRevenueDto dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var newRevenue = await _revenueService.CreateAsync(dto);
+                var newRevenue = await _revenueService.CreateAsync(dto, groupId);
 
                 return CreatedAtAction(nameof(GetRevenueById), new { id = newRevenue.Id }, newRevenue);
             }
@@ -69,6 +73,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> EditRevenueType(int id, EditRevenueDto dto)
         {
@@ -97,6 +102,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteRevenue(int id)
         {

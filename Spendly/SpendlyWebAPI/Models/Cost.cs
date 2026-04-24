@@ -1,4 +1,7 @@
-﻿namespace SpendlyWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SpendlyWebAPI.Models;
 
 public partial class Cost
 {
@@ -14,15 +17,15 @@ public partial class Cost
 
     public int UserId { get; set; }
 
-    public int CurrencyId { get; set; }
+    public int Currency { get; set; }
 
     public int CostTypeId { get; set; }
 
+    public int GroupId { get; set; }
+
     public virtual CostType CostType { get; set; } = null!;
 
-    public virtual Currency Currency { get; set; } = null!;
+    public virtual Group Group { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
-
-    public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 }

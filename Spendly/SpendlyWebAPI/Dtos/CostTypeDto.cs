@@ -4,11 +4,13 @@ namespace SpendlyWebAPI.Dtos
 {
     public class CreateCostTypeDto
     {
+        [Required]
         [MaxLength(150)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
     public class EditCostTypeDto
     {
+        [Required]
         [MaxLength(150)]
         public string? Name { get; set; }
     }

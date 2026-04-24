@@ -7,8 +7,9 @@ namespace SpendlyWebAPI.Services
 {
     public class GroupService : ISqlRepository<ResponseGroupDto, CreateGroupDto, EditGroupDto>
     {
-        private readonly SpendlyContext _context;
-        public GroupService(SpendlyContext context)
+        private readonly SpendlyDbContext _context;
+
+        public GroupService(SpendlyDbContext context)
         {
             _context = context;
         }
@@ -47,12 +48,12 @@ namespace SpendlyWebAPI.Services
         {
             var group = await _context.Groups
                 .FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
-            if (group == null) return true;
+            if (group == null) return false;
 
             group.Name = dto.Name;
             await _context.SaveChangesAsync();
 
-            return false;
+            return true;
         }
 
         public async Task<IEnumerable<ResponseGroupDto>> GetAllAsync()
@@ -71,13 +72,13 @@ namespace SpendlyWebAPI.Services
         public async Task<ResponseGroupDto?> GetByIdAsync(int id)
         {
             return await _context.Groups
-                    .Where(g => g.Id == id && !g.IsDeleted)
-                    .Select(g => new ResponseGroupDto
-                    {
-                        Id = g.Id,
-                        Name = g.Name,
-                        IsPersonal = g.IsPersonal
-                    }).FirstOrDefaultAsync();
+            .Where(g => g.Id == id && !g.IsDeleted)
+            .Select(g => new ResponseGroupDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                IsPersonal = g.IsPersonal
+            }).FirstOrDefaultAsync();
         }
     }
 }

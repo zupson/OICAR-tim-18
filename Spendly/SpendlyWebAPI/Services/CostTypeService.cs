@@ -7,9 +7,9 @@ namespace SpendlyWebAPI.Services
 {
     public class CostTypeService : ISqlRepository<ResponseCostTypeDto, CreateCostTypeDto, EditCostTypeDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
 
-        public CostTypeService(SpendlyContext context)
+        public CostTypeService(SpendlyDbContext context)
         {
             _context = context;
         }

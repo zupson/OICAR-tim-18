@@ -7,9 +7,9 @@ namespace SpendlyWebAPI.Services
 {
     public class RevenueTypeService : ISqlRepository<ResponseRevenueTypeDto, CreateRevenueTypeDto, EditRevenueTypeDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
 
-        public RevenueTypeService(SpendlyContext context)
+        public RevenueTypeService(SpendlyDbContext context)
         {
             _context = context;
         }

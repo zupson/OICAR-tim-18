@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SpendlyWebAPI.Dal.Repo;
 using SpendlyWebAPI.Dtos;
+using SpendlyWebAPI.Enums;
 using SpendlyWebAPI.Models;
 using System.Security.Claims;
 
 namespace SpendlyWebAPI.Services
 {
-    public class CostService : ISqlRepository<ResponseCostDto, CreateCostDto, EditCostDto>
+    public class CostService : ICost<ResponseCostDto, CreateCostDto, EditCostDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public CostService(SpendlyContext context, IHttpContextAccessor httpContextAccessor)
+        public CostService(SpendlyDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -20,7 +21,7 @@ namespace SpendlyWebAPI.Services
 
 
 
-        public async Task<ResponseCostDto> CreateAsync(CreateCostDto dto)
+        public async Task<ResponseCostDto> CreateAsync(CreateCostDto dto, int groupId)
         {
             var cost = new Cost
             {
@@ -28,8 +29,9 @@ namespace SpendlyWebAPI.Services
                 TransactionDate = dto.TransactionDate,
                 Notes = dto.Notes,
                 UserId = GetCurrentUserIdFromJwt(),
-                CurrencyId = dto.CurrencyId,
-                CostTypeId = dto.CostTypeId
+                Currency = (int)dto.Currency,
+                CostTypeId = dto.CostTypeId,
+                GroupId = groupId
             };
 
             _context.Costs.Add(cost);
@@ -41,7 +43,7 @@ namespace SpendlyWebAPI.Services
                 TransactionDate = dto.TransactionDate,
                 Notes = dto.Notes,
                 UserId = GetCurrentUserIdFromJwt(),
-                CurrencyId = dto.CurrencyId,
+                Currency = dto.Currency,
                 CostTypeId = dto.CostTypeId
             };
         }
@@ -65,7 +67,7 @@ namespace SpendlyWebAPI.Services
             if (cost == null) return false;
 
             cost.Amount = dto.Amount;
-            cost.CurrencyId = dto.CurrencyId;
+            cost.Currency = (int)dto.Currency;
             cost.CostTypeId = dto.CostTypeId;
             cost.Notes = dto.Notes;
 
@@ -84,7 +86,7 @@ namespace SpendlyWebAPI.Services
                 TransactionDate = c.TransactionDate,
                 Notes = c.Notes,
                 CostTypeId = c.CostTypeId,
-                CurrencyCode = c.Currency.Code
+                Currency = (Currency)c.Currency
             })
             .ToListAsync();
         }
@@ -100,7 +102,7 @@ namespace SpendlyWebAPI.Services
                 TransactionDate = c.TransactionDate,
                 Notes = c.Notes,
                 CostTypeId = c.CostTypeId,
-                CurrencyCode = c.Currency.Code
+                Currency = (Currency)c.Currency
             })
             .FirstOrDefaultAsync();
         }
