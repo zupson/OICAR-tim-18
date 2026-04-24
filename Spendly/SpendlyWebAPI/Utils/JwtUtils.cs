@@ -8,7 +8,7 @@ namespace SpendlyWebAPI.Utils
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
-            var idClaim = user.FindFirst("id")?.Value
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
                           ?? throw new Exception("JWT ne sadrži claim 'id'");
 
             return int.Parse(idClaim);

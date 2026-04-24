@@ -6,11 +6,11 @@ using System.Security.Claims;
 
 namespace SpendlyWebAPI.Services
 {
-    public class RevenueService : ISqlRepository<ResponseRevenueDto, CreateRevenueDto, EditRevenueDto>
+    public class RevenueService : IRevenue<ResponseRevenueDto, CreateRevenueDto, EditRevenueDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public RevenueService(SpendlyContext context, IHttpContextAccessor httpContextAccessor)
+        public RevenueService(SpendlyDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -19,25 +19,22 @@ namespace SpendlyWebAPI.Services
         private int GetCurrentUserIdFromJwt()
             => int.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        public async Task<ResponseRevenueDto> CreateAsync(CreateRevenueDto dto)
+        public async Task<ResponseRevenueDto> CreateAsync(CreateRevenueDto dto, int groupId)
         {
+            var userId = GetCurrentUserIdFromJwt();
+            
+
             var revenue = new Revenue
             {
                 Amount = dto.Amount,
                 TransactionDate = dto.TransactionDate,
                 Notes = dto.Notes,
-                CurrencyId = dto.CurrencyId,
+                Currency = (int)dto.Currency,
                 RevenueTypeId = dto.RevenueTypeId,
-                UserId = GetCurrentUserIdFromJwt(),
+                UserId = userId,
+                GroupId = groupId,
                 IsDeleted = false
-            };
-
-            if (dto.GroupIds is { Count: > 0 })
-            {
-                revenue.Groups = await _context.Groups
-                    .Where(g => dto.GroupIds.Contains(g.Id))
-                    .ToListAsync();
-            }
+            };          
 
             _context.Revenues.Add(revenue);
             await _context.SaveChangesAsync();
@@ -51,12 +48,12 @@ namespace SpendlyWebAPI.Services
                     TransactionDate = r.TransactionDate,
                     Notes = r.Notes,
                     UserId = r.UserId,
-                    CurrencyId = r.CurrencyId,
-                    CurrencyCode = r.Currency.Code,
-                    CurrencyName = r.Currency.Name,
+                    Currency = (Enums.Currency)r.Currency,
+
                     RevenueTypeId = r.RevenueTypeId,
                     RevenueTypeName = r.RevenueType.Name,
-                    Groups = r.Groups.Select(g => g.Name).ToList()
+                    GroupId = r.Group.Id,
+                    GroupName = r.Group.Name
                 })
                 .FirstAsync();
         }
@@ -70,7 +67,6 @@ namespace SpendlyWebAPI.Services
 
             revenue.IsDeleted = true;
             await _context.SaveChangesAsync();
-
             return true;
         }
 
@@ -78,7 +74,7 @@ namespace SpendlyWebAPI.Services
         {
             var revenue = await _context.Revenues
            .Where(r => r.Id == id && r.UserId == GetCurrentUserIdFromJwt() && !r.IsDeleted)
-           .Include(r => r.Groups)
+           .Include(r => r.Group)
            .FirstOrDefaultAsync();
 
             if (revenue is null) return false;
@@ -86,18 +82,10 @@ namespace SpendlyWebAPI.Services
             revenue.Amount = dto.Amount;
             revenue.TransactionDate = dto.TransactionDate;
             revenue.Notes = dto.Notes;
-            revenue.CurrencyId = dto.CurrencyId;
+            revenue.Currency = (int)dto.Currency;
             revenue.RevenueTypeId = dto.RevenueTypeId;
 
-            if (dto.GroupIds is not null)
-            {
-                revenue.Groups = await _context.Groups
-                    .Where(g => dto.GroupIds.Contains(g.Id))
-                    .ToListAsync();
-            }
-
             await _context.SaveChangesAsync();
-
             return true;
         }
 
@@ -105,9 +93,8 @@ namespace SpendlyWebAPI.Services
         {
             return await _context.Revenues
             .Where(r => r.UserId == GetCurrentUserIdFromJwt() && !r.IsDeleted)
-            .Include(r => r.Currency)
             .Include(r => r.RevenueType)
-            .Include(r => r.Groups)
+            .Include(r => r.Group)
             .Select(r => new ResponseRevenueDto
             {
                 Id = r.Id,
@@ -115,12 +102,12 @@ namespace SpendlyWebAPI.Services
                 TransactionDate = r.TransactionDate,
                 Notes = r.Notes,
                 UserId = r.UserId,
-                CurrencyId = r.CurrencyId,
-                CurrencyCode = r.Currency.Code,
-                CurrencyName = r.Currency.Name,
+                Currency = (Enums.Currency)r.Currency,
+
                 RevenueTypeId = r.RevenueTypeId,
                 RevenueTypeName = r.RevenueType.Name,
-                Groups = r.Groups.Select(g => g.Name).ToList()
+                GroupId = r.GroupId,
+                GroupName = r.Group.Name
             })
             .ToListAsync();
         }
@@ -128,10 +115,9 @@ namespace SpendlyWebAPI.Services
         public async Task<ResponseRevenueDto?> GetByIdAsync(int id)
         {
             return await _context.Revenues
-                .Where(r => r.UserId == GetCurrentUserIdFromJwt() && !r.IsDeleted)
-                .Include(r => r.Currency)
+                .Where(r => r.Id == id && r.UserId == GetCurrentUserIdFromJwt() && !r.IsDeleted)
                 .Include(r => r.RevenueType)
-                .Include(r => r.Groups)
+                .Include(r => r.Group)
                 .Select(r => new ResponseRevenueDto
                 {
                     Id = r.Id,
@@ -139,12 +125,12 @@ namespace SpendlyWebAPI.Services
                     TransactionDate = r.TransactionDate,
                     Notes = r.Notes,
                     UserId = r.UserId,
-                    CurrencyId = r.CurrencyId,
-                    CurrencyCode = r.Currency.Code,
-                    CurrencyName = r.Currency.Name,
+                    Currency = (Enums.Currency)r.Currency,
+
                     RevenueTypeId = r.RevenueTypeId,
                     RevenueTypeName = r.RevenueType.Name,
-                    Groups = r.Groups.Select(g => g.Name).ToList()
+                    GroupId = r.GroupId,
+                    GroupName = r.Group.Name
                 })
                 .FirstOrDefaultAsync();
         }

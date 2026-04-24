@@ -5,29 +5,28 @@ using SpendlyWebAPI.Models;
 
 namespace SpendlyWebAPI.Services
 {
-    public class BudgetService : ISqlRepository<ResponseBudgetDto, CreateBugetDto, EditBugetDto>
+    public class BudgetService : IBudget<ResponseBudgetDto, CreateBugdetDto, EditBudgetDto>
     {
-        private readonly SpendlyContext _context;
-        public BudgetService(SpendlyContext context)
+        private readonly SpendlyDbContext _context;
+        public BudgetService(SpendlyDbContext context)
         {
             _context = context;
         }
 
-        public async Task<ResponseBudgetDto> CreateAsync(CreateBugetDto dto)
+
+        public async Task<ResponseBudgetDto> CreateAsync(int userGroupId, CreateBugdetDto dto)
         {
             var budget = new Budget
             {
                 Amount = dto.Amount,
                 Year = dto.Year,
                 Month = dto.Month,
-                UserGroupId = dto.UserGroupId,
-                CurrencyId = dto.CurrencyId
+                Currency = (int)dto.Currency,
+                UserGroupId = userGroupId,
             };
 
             _context.Budgets.Add(budget);
             await _context.SaveChangesAsync();
-
-            var currency = await _context.Currencies.FindAsync(dto.CurrencyId);
 
             return new ResponseBudgetDto
             {
@@ -36,9 +35,7 @@ namespace SpendlyWebAPI.Services
                 Year = budget.Year,
                 Month = budget.Month,
                 UserGroupId = budget.UserGroupId,
-                CurrencyId = budget.CurrencyId,
-                CurrencyCode = currency!.Code,
-                CurrencyName = currency!.Name
+                Currency = (Enums.Currency)budget.Currency
             };
         }
 
@@ -53,22 +50,18 @@ namespace SpendlyWebAPI.Services
             return true;
         }
 
-        public async Task<bool> EditAsync(int id, EditBugetDto dto)
+        public async Task<bool> EditAsync(int id, EditBudgetDto dto)
         {
             var budget = await _context.Budgets
-                .Include(b => b.Currency)
                 .FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
             if (budget == null) return false;
 
             budget.Amount = dto.Amount;
             budget.Year = dto.Year;
             budget.Month = dto.Month;
-            budget.CurrencyId = dto.CurrencyId;
+            budget.Currency = (int)dto.Currency;
 
             await _context.SaveChangesAsync();
-
-            if (budget.Currency.Id != dto.CurrencyId)
-                await _context.Entry(budget).Reference(b => b.Currency).LoadAsync();
 
             return true;
         }
@@ -77,7 +70,6 @@ namespace SpendlyWebAPI.Services
         {
             return await _context.Budgets
                 .Where(b => !b.IsDeleted)
-                .Include(b => b.Currency)
                 .Select(b => new ResponseBudgetDto
                 {
                     Id = b.Id,
@@ -85,9 +77,7 @@ namespace SpendlyWebAPI.Services
                     Year = b.Year,
                     Month = b.Month,
                     UserGroupId = b.UserGroupId,
-                    CurrencyId = b.CurrencyId,
-                    CurrencyCode = b.Currency.Code,
-                    CurrencyName = b.Currency.Name
+                    Currency = (Enums.Currency)b.Currency
                 })
                 .ToListAsync();
         }
@@ -95,7 +85,6 @@ namespace SpendlyWebAPI.Services
         public async Task<ResponseBudgetDto?> GetByIdAsync(int id)
         {
             var budget = await _context.Budgets
-                .Include(b => b.Currency)
                 .FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
             if (budget == null) return null;
 
@@ -106,9 +95,7 @@ namespace SpendlyWebAPI.Services
                 Year = budget.Year,
                 Month = budget.Month,
                 UserGroupId = budget.UserGroupId,
-                CurrencyId = budget.CurrencyId,
-                CurrencyCode = budget.Currency.Code,
-                CurrencyName = budget.Currency.Name
+                Currency = (Enums.Currency)budget.Currency
             };
         }
     }

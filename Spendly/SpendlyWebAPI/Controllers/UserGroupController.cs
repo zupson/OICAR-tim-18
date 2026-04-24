@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -14,6 +15,7 @@ namespace SpendlyWebAPI.Controllers
             _userGroupService = userGroupService;
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseUserGroupDto>>> GetAllUserGroups()
         {
@@ -28,6 +30,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseUserGroupDto>> GetUserGroupById(int id)
         {
@@ -42,34 +45,34 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ResponseUserGroupDto>> CreateNewUserGroup(CreateUserGroupDto dto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+        //[HttpPost("[action]/{groupId}")]
+        //public async Task<ActionResult<ResponseUserGroupDto>> CreateNewUserGroup(int groupId)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //            return BadRequest(ModelState);
 
-                var newUserGroup = await _userGroupService.CreateAsync(dto);
+        //        var newUserGroup = await _userGroupService.CreateAsync(groupId);
 
-                return CreatedAtAction(nameof(GetUserGroupById), new { id = newUserGroup.Id }, newUserGroup);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //        return CreatedAtAction(nameof(GetUserGroupById), new { id = newUserGroup.Id }, newUserGroup);
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
 
 
-
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteUserGroup(int id)
         {

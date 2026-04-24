@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -15,16 +16,16 @@ namespace SpendlyWebAPI.Controllers
             _budgetService = budgetService;
         }
 
-        // POST api/<CountryController>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ResponseBudgetDto>> CreateCountry(CreateBugetDto dto)
+        [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpPost("[action]/{userGroupId}")]
+        public async Task<ActionResult<ResponseBudgetDto>> CreateBudget(int userGroupId, CreateBugdetDto dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var createdBudget = await _budgetService.CreateAsync(dto);
+                var createdBudget = await _budgetService.CreateAsync(userGroupId, dto);
                 return CreatedAtAction(nameof(GetBudgetById), new { id = createdBudget.Id }, createdBudget);
             }
             catch (KeyNotFoundException ex)
@@ -41,7 +42,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // DELETE api/<CountryController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteBudget(int id)
         {
@@ -62,7 +63,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // GET: api/<CountryController>
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseBudgetDto>>> GetAllBudgets()
         {
@@ -77,7 +78,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // GET api/<CountryController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseBudgetDto>> GetBudgetById(int id)
         {
@@ -99,9 +100,9 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // PUT api/<CountryController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> UpdateBudget(int id, EditBugetDto dto)
+        public async Task<IActionResult> UpdateBudget(int id, EditBudgetDto dto)
         {
             try
             {

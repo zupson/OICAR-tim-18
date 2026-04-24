@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -14,6 +15,7 @@ namespace SpendlyWebAPI.Controllers
             _costService = costService;
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseCostDto>>> GetAllCosts()
         {
@@ -28,6 +30,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseCostDto>> GetCostById(int id)
         {
@@ -42,15 +45,16 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ResponseCostDto>> CreateNewCost(CreateCostDto dto)
+        [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpPost("[action]/{groupId}")]
+        public async Task<ActionResult<ResponseCostDto>> CreateNewCost(int groupId, CreateCostDto dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var newCost = await _costService.CreateAsync(dto);
+                var newCost = await _costService.CreateAsync(dto, groupId);
 
                 return CreatedAtAction(nameof(GetCostById), new { id = newCost.Id }, newCost);
             }
@@ -69,8 +73,8 @@ namespace SpendlyWebAPI.Controllers
 
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
-
         public async Task<IActionResult> EditCostType(int id, EditCostDto dto)
         {
             try
@@ -98,6 +102,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCost(int id)
         {

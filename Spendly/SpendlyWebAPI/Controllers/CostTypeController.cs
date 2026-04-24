@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -15,6 +16,7 @@ namespace SpendlyWebAPI.Controllers
             _costTypeService = costTypeService;
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseCostTypeDto>>> GetAllCostTypes()
         {
@@ -29,6 +31,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseCostTypeDto>> GetCostTypeById(int id)
         {
@@ -43,6 +46,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPost("[action]")]
         public async Task<ActionResult<ResponseCostTypeDto>> CreateNewCostType(CreateCostTypeDto dto)
         {
@@ -70,6 +74,7 @@ namespace SpendlyWebAPI.Controllers
 
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> EditCostType(int id, EditCostTypeDto dto)
         {
@@ -98,6 +103,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteCostType(int id)
         {

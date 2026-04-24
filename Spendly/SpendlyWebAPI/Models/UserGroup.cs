@@ -1,4 +1,7 @@
-﻿namespace SpendlyWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SpendlyWebAPI.Models;
 
 public partial class UserGroup
 {
@@ -8,15 +11,13 @@ public partial class UserGroup
 
     public int GroupId { get; set; }
 
-    public DateTime JoinedAt { get; set; }
+    public int Role { get; set; }
 
-    public int? InvitationId { get; set; }
+    public DateTime JoinedAt { get; set; }
 
     public virtual ICollection<Budget> Budgets { get; set; } = new List<Budget>();
 
     public virtual Group Group { get; set; } = null!;
-
-    public virtual Invitation? Invitation { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

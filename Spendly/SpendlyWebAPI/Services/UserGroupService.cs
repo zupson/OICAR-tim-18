@@ -6,11 +6,11 @@ using System.Security.Claims;
 
 namespace SpendlyWebAPI.Services
 {
-    public class UserGroupService : IUserGroup<ResponseUserGroupDto, CreateUserGroupDto>
+    public class UserGroupService : IUserGroup<ResponseUserGroupDto>
     {
-        private readonly SpendlyContext _context;
+        private readonly SpendlyDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public UserGroupService(SpendlyContext context, IHttpContextAccessor httpContextAccessor)
+        public UserGroupService(SpendlyDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -31,18 +31,19 @@ namespace SpendlyWebAPI.Services
 
         public async Task<IEnumerable<ResponseUserGroupDto>> GetAllAsync()
         {
+            int userId = GetCurrentUserIdFromJwt();
             return await _context.UserGroups
                 .Include(x => x.User)
                 .Include(x => x.Group)
+                .Where(uG => uG.UserId == userId)
                 .Select(uG => new ResponseUserGroupDto
                 {
                     Id = uG.Id,
                     UserId = uG.UserId,
-                    UserName = uG.User.Username,
+                    Username = uG.User.Username,
                     GroupId = uG.GroupId,
                     GroupName = uG.Group.Name,
                     JoinedAt = uG.JoinedAt,
-                    InvitationId = uG.InvitationId,
                 }).ToListAsync();
         }
 
@@ -56,22 +57,25 @@ namespace SpendlyWebAPI.Services
                 {
                     Id = uG.Id,
                     UserId = uG.UserId,
-                    UserName = uG.User.Username,
+                    Username = uG.User.Username,
                     GroupId = uG.GroupId,
                     GroupName = uG.Group.Name,
                     JoinedAt = uG.JoinedAt,
-                    InvitationId = uG.InvitationId
                 }).FirstOrDefaultAsync();
         }
 
-        public async Task<ResponseUserGroupDto> CreateAsync(CreateUserGroupDto dto)
+        public async Task<ResponseUserGroupDto> CreateAsync(int groupId)
         {
+            int userId = GetCurrentUserIdFromJwt();
+
+            bool alreadyMember = await _context.UserGroups.AnyAsync(ug => ug.UserId == userId && ug.GroupId == groupId);
+            if (alreadyMember) throw new InvalidOperationException("User is already a member of this group.");
+
             var userGroup = new UserGroup
             {
-                UserId = GetCurrentUserIdFromJwt(),
-                GroupId = dto.GroupId,
-                JoinedAt = DateTime.UtcNow,
-                InvitationId = dto.InvitationId
+                UserId = userId,
+                GroupId = groupId,
+                JoinedAt = DateTime.UtcNow
             };
 
             _context.UserGroups.Add(userGroup);
@@ -80,12 +84,11 @@ namespace SpendlyWebAPI.Services
             return new ResponseUserGroupDto
             {
                 Id = userGroup.Id,
-                UserId = GetCurrentUserIdFromJwt(),
-                UserName = userGroup.User.Username,
-                GroupId= userGroup.GroupId,
+                UserId = userGroup.User.Id,
+                Username = userGroup.User.Username,
+                GroupId = userGroup.GroupId,
                 GroupName = userGroup.Group.Name,
                 JoinedAt = userGroup.JoinedAt,
-                InvitationId = dto.InvitationId
             };
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -15,7 +16,7 @@ namespace SpendlyWebAPI.Controllers
             _revenueTypeService = revenueTypeService;
         }
 
-        // GET: api/<RoleController>
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseRevenueTypeDto>>> GetAllRevenueTypes()
         {
@@ -30,7 +31,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // GET api/<RoleController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseRevenueTypeDto>> GetRevenueTypeById(int id)
         {
@@ -45,7 +46,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // POST api/<RoleController>
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPost("[action]")]
         public async Task<ActionResult<ResponseRevenueTypeDto>> CreateNewRevenueType(CreateRevenueTypeDto dto)
         {
@@ -72,7 +73,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // PUT api/<RoleController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> EditRevenueType(int id, EditRevenueTypeDto dto)
         {
@@ -101,7 +102,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        // DELETE api/<RoleController>/5
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteRevenueType(int id)
         {

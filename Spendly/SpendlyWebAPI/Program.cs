@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SpendlyWebAPI.Dal.Repo;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
+using SpendlyWebAPI.Utils;
 using System.Text;
 
 namespace SpendlyWebAPI
@@ -16,11 +17,7 @@ namespace SpendlyWebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
-
-            builder.Services.AddDbContext<Models.SpendlyContext>(options =>
-            {
-                options.UseSqlServer("Name=ConnectionStrings:DatabaseConnStr");
-            });
+            builder.Services.AddDbContext<Models.SpendlyDbContext>(options => options.UseSqlServer("Name=ConnectionStrings:DatabaseConnStr"));
 
             var secureKey = builder.Configuration["JWT:SecureKey"];
             builder.Services
@@ -41,9 +38,7 @@ namespace SpendlyWebAPI
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddScoped<UserService>();
-            builder.Services.AddScoped<RoleService>();
             builder.Services.AddScoped<GroupService>();
-            builder.Services.AddScoped<CurrencyService>();
             builder.Services.AddScoped<CostService>();
             builder.Services.AddScoped<CostTypeService>();
             builder.Services.AddScoped<RevenueService>();
@@ -52,10 +47,10 @@ namespace SpendlyWebAPI
             builder.Services.AddScoped<InvitationService>();
             builder.Services.AddScoped<UserGroupService>();
 
-            builder.Services.AddScoped<ISqlRepository<ResponseRoleDto, CreateRoleDto, EditRoleDto>, RoleService>();
             builder.Services.AddScoped<IAuthentication<ResponseUserDto>, UserService>();
             builder.Services.AddScoped<IInvitation<ResponseInvitationDto, CreateInvitationDto>, InvitationService>();
-            builder.Services.AddScoped<IUserGroup<ResponseUserGroupDto, CreateUserGroupDto>, UserGroupService>();
+            builder.Services.AddScoped<IUserGroup<ResponseUserGroupDto>, UserGroupService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddSwaggerGen(c =>
             {
@@ -80,13 +75,12 @@ namespace SpendlyWebAPI
                 app.UseSwaggerUI();
             }
 
+            DbSeed.SeedAdmin(app.Services);
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

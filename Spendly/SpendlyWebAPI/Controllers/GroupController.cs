@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Services;
 
@@ -15,6 +16,7 @@ namespace SpendlyWebAPI.Controllers
             _groupService = groupService;
         }
 
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ResponseGroupDto>>> GetAllGroups()
         {
@@ -29,6 +31,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseGroupDto>> GetGroupById(int id)
         {
@@ -43,6 +46,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPost("[action]")]
         public async Task<ActionResult<ResponseGroupDto>> CreateNewGroup(CreateGroupDto dto)
         {
@@ -69,7 +73,7 @@ namespace SpendlyWebAPI.Controllers
             }
 
         }
-
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> EditGroup(int id, EditGroupDto dto)
         {
@@ -98,6 +102,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteGroup(int id)
         {

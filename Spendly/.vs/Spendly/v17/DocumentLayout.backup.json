@@ -1,46 +1,42 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\",
+  "WorkspaceRootPath": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\usergroupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\usergroupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\controllers\\costcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\costcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\services\\costservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\services\\costservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\dal\\repo\\icost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\dal\\repo\\icost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\revenuetypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\revenuetypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\dal\\repo\\irevenueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\dal\\repo\\irevenueservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\revenuecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\revenuecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\invitationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\controllers\\invitationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\invitationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\utils\\dbseed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\utils\\dbseed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\currencycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\currencycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\services\\budgetservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\services\\budgetservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\costtypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\costtypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\spendly\\spendlywebapi\\controllers\\budgetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\controllers\\budgetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\controllers\\budgetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|c:\\users\\marko\\onedrive - algebra\\3.god\\oicar\\oicar-tim-18\\spendly\\spendlywebapi\\dal\\repo\\ibudget.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6901A8D1-AC94-4C67-8389-0AAD87E6694E}|SpendlyWebAPI\\SpendlyWebAPI.csproj|solutionrelative:spendlywebapi\\dal\\repo\\ibudget.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -49,133 +45,9 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 375,
+          "DockedWidth": 414,
           "SelectedChildIndex": 6,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "CostTypeController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\CostTypeController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\CostTypeController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\CostTypeController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\CostTypeController.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAADwv2EAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:52:50.504Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CurrencyController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\CurrencyController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\CurrencyController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\CurrencyController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\CurrencyController.cs",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAowGkAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:54:53.213Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "GroupController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\GroupController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\GroupController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\GroupController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\GroupController.cs",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAowGQAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:55:46.442Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "InvitationController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\InvitationController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\InvitationController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\InvitationController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\InvitationController.cs",
-              "ViewState": "AgIAAEkAAAAAAAAAAAAkwEkAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:56:25.047Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RevenueController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RevenueController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\RevenueController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RevenueController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\RevenueController.cs",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAowGcAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:56:56.131Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "RevenueTypeController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RevenueTypeController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\RevenueTypeController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RevenueTypeController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\RevenueTypeController.cs",
-              "ViewState": "AgIAAGMAAAAAAAAAAAAowGgAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:57:45.85Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "UserGroupController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\UserGroupController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\UserGroupController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\UserGroupController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\UserGroupController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEgAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:59:32.921Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\UserController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\UserController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\UserController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:59:29.928Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "RoleController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RoleController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\RoleController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\RoleController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\RoleController.cs",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAowGsAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:58:34.209Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -187,39 +59,122 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "28938b58-74f4-4fa6-aeec-a5fa47f0d59b",
-        "Display": 0,
-        "X": 47,
-        "Y": 31,
-        "Width": 1369,
-        "Height": 859,
-        "WindowState": 2
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
+            },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "BudgetController.cs",
-              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\BudgetController.cs",
-              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\BudgetController.cs",
-              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\Spendly\\SpendlyWebAPI\\Controllers\\BudgetController.cs",
-              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\BudgetController.cs",
-              "ViewState": "AgIAACcAAAAAAAAAAAAYwEEAAAAaAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "ICost.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\ICost.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Dal\\Repo\\ICost.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\ICost.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Dal\\Repo\\ICost.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-14T13:52:39.585Z",
+              "WhenOpened": "2026-04-24T20:17:32.457Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IRevenueService.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\IRevenueService.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Dal\\Repo\\IRevenueService.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\IRevenueService.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Dal\\Repo\\IRevenueService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T20:16:23.495Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CostService.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Services\\CostService.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Services\\CostService.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Services\\CostService.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Services\\CostService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAADwvyIAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T20:15:26.583Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CostController.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\CostController.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\CostController.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\CostController.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\CostController.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAiwDUAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T20:14:41.174Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IBudget.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\IBudget.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Dal\\Repo\\IBudget.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Dal\\Repo\\IBudget.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Dal\\Repo\\IBudget.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T20:00:22.085Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BudgetController.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\BudgetController.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\BudgetController.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\BudgetController.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\BudgetController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T19:49:47.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "BudgetService.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Services\\BudgetService.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Services\\BudgetService.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Services\\BudgetService.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Services\\BudgetService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAwAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T18:05:45.411Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DbSeed.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Utils\\DbSeed.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Utils\\DbSeed.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Utils\\DbSeed.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Utils\\DbSeed.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T17:52:52.124Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "InvitationController.cs",
+              "DocumentMoniker": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\InvitationController.cs",
+              "RelativeDocumentMoniker": "SpendlyWebAPI\\Controllers\\InvitationController.cs",
+              "ToolTip": "C:\\Users\\marko\\OneDrive - Algebra\\3.god\\OICAR\\OICAR-tim-18\\Spendly\\SpendlyWebAPI\\Controllers\\InvitationController.cs",
+              "RelativeToolTip": "SpendlyWebAPI\\Controllers\\InvitationController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T17:49:33.978Z",
               "EditorCaption": ""
             }
           ]
