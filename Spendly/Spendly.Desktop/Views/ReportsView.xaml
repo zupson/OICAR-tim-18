@@ -1,0 +1,8 @@
+<UserControl x:Class="Spendly.Desktop.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BgDeepBrush}">
+    <TextBlock Text="Izvještaji — dolazi uskoro"
+               FontSize="20" Foreground="{StaticResource TextSecondaryBrush}"
+               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+</UserControl>

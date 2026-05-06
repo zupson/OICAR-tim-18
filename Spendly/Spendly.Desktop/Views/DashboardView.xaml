@@ -1,0 +1,74 @@
+<UserControl x:Class="Spendly.Desktop.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BgDeepBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel>
+
+            <TextBlock Text="Nadzorna ploča"
+                       FontSize="24" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}"
+                       Margin="0,0,0,24"/>
+
+            <!-- Summary cards -->
+            <UniformGrid Columns="4" Margin="0,0,0,0">
+
+                <Border Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Margin="0,0,12,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Ukupni prihodi"
+                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentGreenBrush}"
+                                   Text="{Binding TotalIncome, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Margin="0,0,12,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Ukupni rashodi"
+                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentRedBrush}"
+                                   Text="{Binding TotalExpenses, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Margin="0,0,12,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Stanje"
+                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBlueBrush}"
+                                   Text="{Binding Balance, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource BgCardBrush}"
+                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Zajednički rashodi"
+                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentAmberBrush}"
+                                   Text="{Binding SharedExpenses, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                    </StackPanel>
+                </Border>
+
+            </UniformGrid>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
