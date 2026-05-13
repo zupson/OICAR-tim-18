@@ -2,7 +2,128 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BgDeepBrush}">
-    <TextBlock Text="Obitelj — dolazi uskoro"
-               FontSize="20" Foreground="{StaticResource TextSecondaryBrush}"
-               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel>
+
+            <TextBlock Text="Obitelj"
+                       FontSize="24" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}"
+                       Margin="0,0,0,24"/>
+
+            <ItemsControl ItemsSource="{Binding Members}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="300"
+                                Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                CornerRadius="8" Padding="20" Margin="0,0,16,16">
+                            <StackPanel>
+
+                                <!-- Avatar + name + role -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                    <Border Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0"
+                                            Background="{Binding AvatarColor, Converter={StaticResource StringToBrushConverter}}">
+                                        <TextBlock Text="{Binding AvatarInitials, Mode=OneWay}"
+                                                   FontSize="18" FontWeight="Bold"
+                                                   Foreground="White"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name, Mode=OneWay}"
+                                                   FontSize="15" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   Margin="0,0,0,4"/>
+                                        <Border CornerRadius="4" Padding="8,2" HorizontalAlignment="Left">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#1e3a5f"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Role}" Value="Vlasnik">
+                                                            <Setter Property="Background" Value="#1e3a7f"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Role, Mode=OneWay}"
+                                                       FontSize="11">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Role}" Value="Vlasnik">
+                                                                <Setter Property="Foreground" Value="{StaticResource AccentBlueBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Email -->
+                                <TextBlock Text="{Binding Email, Mode=OneWay}"
+                                           FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                           Margin="0,0,0,16"/>
+
+                                <!-- Divider -->
+                                <Border Height="1" Background="{StaticResource AppBorderBrush}" Margin="0,0,0,16"/>
+
+                                <!-- Stats -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Prihodi"
+                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding TotalIncome, StringFormat={}{0:N2} €, Mode=OneWay}"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentGreenBrush}"/>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Rashodi"
+                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding TotalSpent, StringFormat={}{0:N2} €, Mode=OneWay}"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentRedBrush}"/>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Stanje"
+                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Balance, StringFormat={}{0:N2} €, Mode=OneWay}"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{Binding IsBalancePositive, Converter={StaticResource BoolToBrushConverter}}"/>
+                                </Grid>
+
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+
 </UserControl>

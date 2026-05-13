@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BC724CB7-3B31-4C35-85CF-E73D3BC36231}|Spendly.Desktop\\Spendly.Desktop.csproj|c:\\users\\luka\\desktop\\oicar\\spendly\\oicar-tim-18\\spendly\\spendly.desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{BC724CB7-3B31-4C35-85CF-E73D3BC36231}|Spendly.Desktop\\Spendly.Desktop.csproj|solutionrelative:spendly.desktop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BC724CB7-3B31-4C35-85CF-E73D3BC36231}|Spendly.Desktop\\Spendly.Desktop.csproj|c:\\users\\luka\\desktop\\oicar\\spendly\\oicar-tim-18\\spendly\\spendly.desktop\\views\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{BC724CB7-3B31-4C35-85CF-E73D3BC36231}|Spendly.Desktop\\Spendly.Desktop.csproj|solutionrelative:spendly.desktop\\views\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 414,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +31,30 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SettingsView.xaml",
+              "DocumentMoniker": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\Views\\SettingsView.xaml",
+              "RelativeDocumentMoniker": "Spendly.Desktop\\Views\\SettingsView.xaml",
+              "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\Views\\SettingsView.xaml",
+              "RelativeToolTip": "Spendly.Desktop\\Views\\SettingsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T23:31:12.447Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "Spendly.Desktop\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\MainWindow.xaml",
+              "RelativeToolTip": "Spendly.Desktop\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T23:29:07.625Z",
+              "EditorCaption": ""
             }
           ]
         }
