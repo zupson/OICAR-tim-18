@@ -1,5 +1,6 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using Spendly.Desktop.Services;
 using Spendly.Desktop.ViewModels;
 using Spendly.Desktop.Views;
 
@@ -15,6 +16,7 @@ public partial class App : Application
 
         var sc = new ServiceCollection();
 
+        sc.AddSingleton<SettingsService>();
         sc.AddSingleton<DashboardViewModel>();
         sc.AddSingleton<BudgetViewModel>();
         sc.AddSingleton<ReportsViewModel>();

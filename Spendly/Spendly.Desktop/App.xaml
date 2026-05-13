@@ -7,6 +7,9 @@
     <Application.Resources>
 
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <conv:AlertLevelToBrushConverter x:Key="AlertLevelToBrushConverter"/>
+        <conv:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+        <conv:StringToBrushConverter x:Key="StringToBrushConverter"/>
 
         <!-- Color palette -->
         <SolidColorBrush x:Key="BgDeepBrush"    Color="#0D1B2A"/>
