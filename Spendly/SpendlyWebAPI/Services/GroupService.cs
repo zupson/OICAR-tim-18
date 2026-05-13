@@ -56,7 +56,7 @@ namespace SpendlyWebAPI.Services
             return true;
         }
 
-        public async Task<IEnumerable<ResponseGroupDto>> GetAllAsync()
+        public async Task<IEnumerable<ResponseGroupDto>> GetAllAsync(int? id = null)
         {
             return await _context.Groups
             .Where(g => !g.IsDeleted)

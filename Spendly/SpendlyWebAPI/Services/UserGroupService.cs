@@ -47,6 +47,23 @@ namespace SpendlyWebAPI.Services
                 }).ToListAsync();
         }
 
+        public async Task<IEnumerable<ResponseUserGroupDto>> GetMembersByGroup(int groupId)
+        {
+            return await _context.UserGroups
+               .Include(x => x.User)
+               .Include(x => x.Group)
+               .Where(uG => uG.GroupId == groupId)
+               .Select(uG => new ResponseUserGroupDto
+               {
+                   Id = uG.Id,
+                   UserId = uG.UserId,
+                   Username = uG.User.Username,
+                   GroupId = uG.GroupId,
+                   GroupName = uG.Group.Name,
+                   JoinedAt = uG.JoinedAt,
+               }).ToListAsync();
+        }
+
         public async Task<ResponseUserGroupDto?> GetByIdAsync(int id)
         {
             return await _context.UserGroups

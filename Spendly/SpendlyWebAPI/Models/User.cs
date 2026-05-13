@@ -1,4 +1,7 @@
-﻿namespace SpendlyWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SpendlyWebAPI.Models;
 
 public partial class User
 {
