@@ -57,7 +57,7 @@
                 <!-- User info -->
                 <Border DockPanel.Dock="Bottom" Padding="16,12"
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0">
-                    <TextBlock Text="Admin"
+                    <TextBlock Text="{Binding LoggedInUser}"
                                FontSize="13"
                                Foreground="{StaticResource TextMutedBrush}"/>
                 </Border>

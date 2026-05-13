@@ -13,7 +13,9 @@ public partial class LoginWindow : Window
 
         vm.LoginSucceeded += () =>
         {
-            App.Services.GetRequiredService<MainWindow>().Show();
+            var mainWindow = App.Services.GetRequiredService<MainWindow>();
+            ((MainViewModel)mainWindow.DataContext).LoggedInUser = vm.Username;
+            mainWindow.Show();
             Close();
         };
     }

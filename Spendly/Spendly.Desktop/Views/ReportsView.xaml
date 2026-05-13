@@ -6,52 +6,155 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
         <StackPanel>
 
-            <TextBlock Text="Izvještaji"
-                       FontSize="24" FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimaryBrush}"
-                       Margin="0,0,0,16"/>
+            <!-- Header row -->
+            <Grid Margin="0,0,0,16">
+                <TextBlock Text="Izvještaji" FontSize="24" FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Command="{Binding ToggleAddFormCommand}"
+                        Padding="16,8" FontSize="13" Cursor="Hand" BorderThickness="0" Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="+ Dodaj transakciju"/>
+                            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAddFormOpen}" Value="True">
+                                    <Setter Property="Content" Value="✕ Odustani"/>
+                                    <Setter Property="Background" Value="{StaticResource TextMutedBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+            <!-- Add form -->
+            <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Nova transakcija" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <!-- Row 1: Description, Category, Amount -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Opis" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Kategorija" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewCategory, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Iznos ({0})">
+                                        <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBox Text="{Binding NewAmount, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Row 2: Type, Scope, Date -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Vrsta" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding NewTypeOptions}"
+                                      SelectedItem="{Binding NewSelectedType}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Opseg" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding NewScopeOptions}"
+                                      SelectedItem="{Binding NewSelectedScope}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Datum" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <DatePicker SelectedDate="{Binding NewDate}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Dodaj" Command="{Binding AddTransactionCommand}"
+                                Background="{StaticResource AccentGreenBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
+                        <TextBlock Text="{Binding AddError, Mode=OneWay}"
+                                   Foreground="{StaticResource AccentRedBrush}" FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding AddError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- Filter bar -->
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="0,0,0,16">
                 <StackPanel Orientation="Horizontal">
-
                     <StackPanel Margin="0,0,16,0">
                         <TextBlock Text="Od" FontSize="12"
                                    Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                        <DatePicker SelectedDate="{Binding From}"
-                                    Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
-                                    Width="140"/>
+                        <DatePicker SelectedDate="{Binding From}" Width="140"/>
                     </StackPanel>
-
                     <StackPanel Margin="0,0,16,0">
                         <TextBlock Text="Do" FontSize="12"
                                    Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                        <DatePicker SelectedDate="{Binding To}"
-                                    Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
-                                    Width="140"/>
+                        <DatePicker SelectedDate="{Binding To}" Width="140"/>
                     </StackPanel>
-
                     <StackPanel Margin="0,0,16,0">
                         <TextBlock Text="Vrsta" FontSize="12"
                                    Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                         <ComboBox ItemsSource="{Binding TypeOptions}"
-                                  SelectedItem="{Binding SelectedType}"
-                                  Width="120"/>
+                                  SelectedItem="{Binding SelectedType}" Width="120"/>
                     </StackPanel>
-
-                    <Button Content="Filtriraj"
-                            Command="{Binding ApplyFiltersCommand}"
+                    <Button Content="Filtriraj" Command="{Binding ApplyFiltersCommand}"
                             Background="{StaticResource AccentBlueBrush}"
                             Foreground="White" BorderThickness="0"
-                            Padding="16,8" Cursor="Hand"
-                            VerticalAlignment="Bottom"/>
-
+                            Padding="16,8" Cursor="Hand" VerticalAlignment="Bottom"/>
                 </StackPanel>
             </Border>
 
-            <!-- Transaction list header -->
+            <!-- Column headers -->
             <Grid Margin="4,0,4,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
@@ -59,6 +162,7 @@
                     <ColumnDefinition Width="120"/>
                     <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Datum"      FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
                 <TextBlock Grid.Column="1" Text="Opis"       FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
@@ -67,7 +171,7 @@
                 <TextBlock Grid.Column="4" Text="Iznos"      FontSize="12" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Right"/>
             </Grid>
 
-            <!-- Rows -->
+            <!-- Transaction rows -->
             <ItemsControl ItemsSource="{Binding Filtered}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -81,6 +185,7 @@
                                     <ColumnDefinition Width="120"/>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="60"/>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0"
@@ -88,8 +193,7 @@
                                            FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
                                            VerticalAlignment="Center"/>
 
-                                <TextBlock Grid.Column="1"
-                                           Text="{Binding Description, Mode=OneWay}"
+                                <TextBlock Grid.Column="1" Text="{Binding Description, Mode=OneWay}"
                                            FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
 
@@ -100,16 +204,30 @@
                                                FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
                                 </Border>
 
-                                <TextBlock Grid.Column="3"
-                                           Text="{Binding ScopeLabel, Mode=OneWay}"
+                                <TextBlock Grid.Column="3" Text="{Binding ScopeLabel, Mode=OneWay}"
                                            FontSize="12" Foreground="{StaticResource TextMutedBrush}"
                                            VerticalAlignment="Center"/>
 
                                 <TextBlock Grid.Column="4"
-                                           Text="{Binding FormattedAmount, Mode=OneWay}"
                                            FontSize="14" FontWeight="SemiBold"
                                            Foreground="{Binding IsIncome, Converter={StaticResource BoolToBrushConverter}}"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                           HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                            <Binding Path="Amount" Mode="OneWay"/>
+                                            <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            <Binding Path="IsIncome" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+
+                                <Button Grid.Column="5" Content="✕"
+                                        Command="{Binding DataContext.DeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                        BorderThickness="0" FontSize="14" Cursor="Hand"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
                     </DataTemplate>

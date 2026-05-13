@@ -17,6 +17,7 @@ public partial class App : Application
         var sc = new ServiceCollection();
 
         sc.AddSingleton<SettingsService>();
+        sc.AddSingleton<MockDataService>();
         sc.AddSingleton<DashboardViewModel>();
         sc.AddSingleton<BudgetViewModel>();
         sc.AddSingleton<ReportsViewModel>();
