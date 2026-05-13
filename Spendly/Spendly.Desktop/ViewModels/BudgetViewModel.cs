@@ -18,13 +18,16 @@ public partial class BudgetViewModel : ObservableObject
     [ObservableProperty] private decimal _newLimit;
     [ObservableProperty] private string _addError = string.Empty;
 
+    public ObservableCollection<string> Categories => _data.Categories;
     public string  CurrencySymbol => _data.CurrencySymbol;
     public decimal ExchangeRate   => _data.ExchangeRate;
+    public bool    HasNoBudgets   => _data.Budgets.Count == 0;
 
     public BudgetViewModel(MockDataService data)
     {
         _data = data;
         _data.PropertyChanged += (_, _) => { OnPropertyChanged(nameof(CurrencySymbol)); OnPropertyChanged(nameof(ExchangeRate)); };
+        _data.Budgets.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoBudgets));
     }
 
     [RelayCommand]
@@ -58,7 +61,17 @@ public partial class BudgetViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void DeleteBudget(Budget budget) => _data.Budgets.Remove(budget);
+    private void RequestDeleteBudget(Budget budget)
+    {
+        foreach (var b in _data.Budgets) b.IsConfirmingDelete = false;
+        budget.IsConfirmingDelete = true;
+    }
+
+    [RelayCommand]
+    private void ConfirmDeleteBudget(Budget budget) => _data.Budgets.Remove(budget);
+
+    [RelayCommand]
+    private void CancelDeleteBudget(Budget budget) => budget.IsConfirmingDelete = false;
 
     [RelayCommand]
     private void StartEdit(Budget budget)

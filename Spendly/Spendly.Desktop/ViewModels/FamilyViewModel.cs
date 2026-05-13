@@ -24,11 +24,13 @@ public partial class FamilyViewModel : ObservableObject
 
     public string  CurrencySymbol => _data.CurrencySymbol;
     public decimal ExchangeRate   => _data.ExchangeRate;
+    public bool    HasNoMembers   => _data.FamilyMembers.Count == 0;
 
     public FamilyViewModel(MockDataService data)
     {
         _data = data;
         _data.PropertyChanged += (_, _) => { OnPropertyChanged(nameof(CurrencySymbol)); OnPropertyChanged(nameof(ExchangeRate)); };
+        _data.FamilyMembers.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoMembers));
     }
 
     [RelayCommand]
@@ -64,5 +66,15 @@ public partial class FamilyViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void DeleteMember(FamilyMember member) => _data.FamilyMembers.Remove(member);
+    private void RequestDeleteMember(FamilyMember member)
+    {
+        foreach (var m in _data.FamilyMembers) m.IsConfirmingDelete = false;
+        member.IsConfirmingDelete = true;
+    }
+
+    [RelayCommand]
+    private void ConfirmDeleteMember(FamilyMember member) => _data.FamilyMembers.Remove(member);
+
+    [RelayCommand]
+    private void CancelDeleteMember(FamilyMember member) => member.IsConfirmingDelete = false;
 }

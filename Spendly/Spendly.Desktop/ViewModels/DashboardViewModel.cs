@@ -5,6 +5,8 @@ using Spendly.Desktop.Services;
 
 namespace Spendly.Desktop.ViewModels;
 
+public record CategoryBar(string Category, decimal Amount, double BarPercent);
+
 public partial class DashboardViewModel : ObservableObject
 {
     private readonly MockDataService _data;
@@ -25,6 +27,28 @@ public partial class DashboardViewModel : ObservableObject
     public decimal SharedExpenses => _data.Transactions.Where(t => t.Type == TransactionType.Expense && t.Scope == TransactionScope.Family).Sum(t => t.Amount);
 
     public IEnumerable<Transaction> RecentTransactions => _data.Transactions.OrderByDescending(t => t.Date).Take(5);
+    public bool HasNoRecentTransactions => !_data.Transactions.Any();
+
+    public IEnumerable<CategoryBar> TopCategories
+    {
+        get
+        {
+            var groups = _data.Transactions
+                .Where(t => t.Type == TransactionType.Expense)
+                .GroupBy(t => t.Category)
+                .Select(g => (Category: g.Key, Total: g.Sum(t => t.Amount)))
+                .OrderByDescending(x => x.Total)
+                .Take(5)
+                .ToList();
+
+            if (groups.Count == 0) return [];
+
+            var max = (double)groups.Max(x => x.Total);
+            return groups.Select(x => new CategoryBar(x.Category, x.Total, max > 0 ? (double)x.Total / max * 100 : 0));
+        }
+    }
+
+    public bool HasNoCategories => !_data.Transactions.Any(t => t.Type == TransactionType.Expense);
 
     private void OnTransactionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -33,5 +57,8 @@ public partial class DashboardViewModel : ObservableObject
         OnPropertyChanged(nameof(Balance));
         OnPropertyChanged(nameof(SharedExpenses));
         OnPropertyChanged(nameof(RecentTransactions));
+        OnPropertyChanged(nameof(HasNoRecentTransactions));
+        OnPropertyChanged(nameof(TopCategories));
+        OnPropertyChanged(nameof(HasNoCategories));
     }
 }

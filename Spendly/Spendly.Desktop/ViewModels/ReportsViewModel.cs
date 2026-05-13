@@ -31,13 +31,20 @@ public partial class ReportsViewModel : ObservableObject
     public List<string> NewTypeOptions  { get; } = ["Rashod", "Prihod"];
     public List<string> NewScopeOptions { get; } = ["Osobno", "Obiteljski"];
 
+    public ObservableCollection<string> Categories => _data.Categories;
     public string  CurrencySymbol => _data.CurrencySymbol;
     public decimal ExchangeRate   => _data.ExchangeRate;
+    public bool    HasNoTransactions => Filtered.Count == 0;
+    public bool    HasTransactions   => Filtered.Count > 0;
+    public int     FilteredCount     => Filtered.Count;
+    public decimal FilteredIncome   => Filtered.Where(t => t.IsIncome).Sum(t => t.Amount * _data.ExchangeRate);
+    public decimal FilteredExpenses => Filtered.Where(t => !t.IsIncome).Sum(t => t.Amount * _data.ExchangeRate);
 
     public ReportsViewModel(MockDataService data)
     {
         _data = data;
-        _data.PropertyChanged += (_, _) => { OnPropertyChanged(nameof(CurrencySymbol)); OnPropertyChanged(nameof(ExchangeRate)); };
+        _data.PropertyChanged += (_, _) => { OnPropertyChanged(nameof(CurrencySymbol)); OnPropertyChanged(nameof(ExchangeRate)); OnPropertyChanged(nameof(FilteredIncome)); OnPropertyChanged(nameof(FilteredExpenses)); };
+        Filtered.CollectionChanged += (_, _) => { OnPropertyChanged(nameof(HasNoTransactions)); OnPropertyChanged(nameof(HasTransactions)); OnPropertyChanged(nameof(FilteredCount)); OnPropertyChanged(nameof(FilteredIncome)); OnPropertyChanged(nameof(FilteredExpenses)); };
         ApplyFilters();
     }
 
@@ -78,9 +85,28 @@ public partial class ReportsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void DeleteTransaction(Transaction t)
+    private void RequestDeleteTransaction(Transaction t)
+    {
+        foreach (var tx in _data.Transactions) tx.IsConfirmingDelete = false;
+        t.IsConfirmingDelete = true;
+    }
+
+    [RelayCommand]
+    private void ConfirmDeleteTransaction(Transaction t)
     {
         _data.Transactions.Remove(t);
+        ApplyFilters();
+    }
+
+    [RelayCommand]
+    private void CancelDeleteTransaction(Transaction t) => t.IsConfirmingDelete = false;
+
+    [RelayCommand]
+    private void ResetFilters()
+    {
+        From = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+        To = DateTime.Now;
+        SelectedType = "Sve";
         ApplyFilters();
     }
 

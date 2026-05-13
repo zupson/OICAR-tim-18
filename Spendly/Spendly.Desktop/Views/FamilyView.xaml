@@ -21,7 +21,7 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsAddFormOpen}" Value="True">
                                     <Setter Property="Content" Value="✕ Odustani"/>
-                                    <Setter Property="Background" Value="{StaticResource TextMutedBrush}"/>
+                                    <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -31,6 +31,7 @@
 
             <!-- Add form -->
             <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
+                    KeyDown="Form_KeyDown"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
                     CornerRadius="8" Padding="20" Margin="0,0,0,16">
@@ -50,7 +51,8 @@
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Ime i prezime" FontSize="12"
                                        Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBox x:Name="MemberNameField"
+                                     Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
                                      Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
                                      BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                                      Padding="10,8" FontSize="13"/>
@@ -147,11 +149,33 @@
                                         </Border>
                                     </StackPanel>
 
-                                    <Button Grid.Column="2" Content="✕" VerticalAlignment="Top"
-                                            Command="{Binding DataContext.DeleteMemberCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
-                                            BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                        <Button Content="✕"
+                                                Visibility="{Binding IsNotConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
+                                                Command="{Binding DataContext.RequestDeleteMemberCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                                BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                                        <StackPanel Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
+                                                    HorizontalAlignment="Right">
+                                            <TextBlock Text="Obrisati?" FontSize="11"
+                                                       Foreground="{StaticResource AccentRedBrush}"
+                                                       HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="Da"
+                                                        Command="{Binding DataContext.ConfirmDeleteMemberCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="{StaticResource AccentRedBrush}" Foreground="White"
+                                                        BorderThickness="0" Padding="8,3" FontSize="11" Cursor="Hand" Margin="0,0,4,0"/>
+                                                <Button Content="Ne"
+                                                        Command="{Binding DataContext.CancelDeleteMemberCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                                        Padding="8,3" FontSize="11" Cursor="Hand"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
                                 </Grid>
 
                                 <!-- Email -->
@@ -225,6 +249,15 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <Border Visibility="{Binding HasNoMembers, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="32">
+                <TextBlock Text="Nema članova obitelji. Kliknite '+ Dodaj člana' za početak."
+                           FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center"/>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

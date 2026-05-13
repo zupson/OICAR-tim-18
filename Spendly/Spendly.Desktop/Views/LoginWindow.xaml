@@ -4,7 +4,8 @@
         Title="Spendly" Width="420" SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="{StaticResource BgDeepBrush}">
+        Background="{StaticResource BgDeepBrush}"
+        PreviewKeyDown="Window_PreviewKeyDown">
 
     <Border Background="{StaticResource BgCardBrush}"
             BorderBrush="{StaticResource AppBorderBrush}"
