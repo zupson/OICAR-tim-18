@@ -11,7 +11,7 @@ public class Transaction
     public TransactionScope Scope { get; set; }
 
     public bool IsIncome => Type == TransactionType.Income;
-    public string FormattedAmount => IsIncome ? $"+{Amount:N2} €" : $"-{Amount:N2} €";
+    public string FormattedAmount => IsIncome ? $"+{Amount:N2}" : $"-{Amount:N2}";
     public string ScopeLabel => Scope == TransactionScope.Family ? "Obiteljski" : "Osobno";
 }
 

@@ -6,6 +6,7 @@ namespace Spendly.Desktop.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty] private ObservableObject _currentPage;
+    [ObservableProperty] private string _loggedInUser = string.Empty;
 
     public MainViewModel(
         DashboardViewModel dashboard,

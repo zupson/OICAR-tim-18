@@ -6,11 +6,87 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
         <StackPanel>
 
-            <TextBlock Text="Obitelj"
-                       FontSize="24" FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimaryBrush}"
-                       Margin="0,0,0,24"/>
+            <!-- Header row -->
+            <Grid Margin="0,0,0,16">
+                <TextBlock Text="Obitelj" FontSize="24" FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Command="{Binding ToggleAddFormCommand}"
+                        Padding="16,8" FontSize="13" Cursor="Hand" BorderThickness="0" Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="+ Dodaj člana"/>
+                            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAddFormOpen}" Value="True">
+                                    <Setter Property="Content" Value="✕ Odustani"/>
+                                    <Setter Property="Background" Value="{StaticResource TextMutedBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
 
+            <!-- Add form -->
+            <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Novi član" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Ime i prezime" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Email" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewEmail, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Uloga" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding RoleOptions}"
+                                      SelectedItem="{Binding NewRole}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Dodaj" Command="{Binding AddMemberCommand}"
+                                Background="{StaticResource AccentGreenBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
+                        <TextBlock Text="{Binding AddError, Mode=OneWay}"
+                                   Foreground="{StaticResource AccentRedBrush}" FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding AddError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Member cards -->
             <ItemsControl ItemsSource="{Binding Members}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -25,18 +101,22 @@
                                 CornerRadius="8" Padding="20" Margin="0,0,16,16">
                             <StackPanel>
 
-                                <!-- Avatar + name + role -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Border Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0"
+                                <!-- Avatar + name + role + delete -->
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0"
                                             Background="{Binding AvatarColor, Converter={StaticResource StringToBrushConverter}}">
                                         <TextBlock Text="{Binding AvatarInitials, Mode=OneWay}"
-                                                   FontSize="18" FontWeight="Bold"
-                                                   Foreground="White"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                                                   FontSize="18" FontWeight="Bold" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
-                                    <StackPanel VerticalAlignment="Center">
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding Name, Mode=OneWay}"
                                                    FontSize="15" FontWeight="SemiBold"
                                                    Foreground="{StaticResource TextPrimaryBrush}"
@@ -52,8 +132,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock Text="{Binding Role, Mode=OneWay}"
-                                                       FontSize="11">
+                                            <TextBlock Text="{Binding Role, Mode=OneWay}" FontSize="11">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
@@ -67,7 +146,13 @@
                                             </TextBlock>
                                         </Border>
                                     </StackPanel>
-                                </StackPanel>
+
+                                    <Button Grid.Column="2" Content="✕" VerticalAlignment="Top"
+                                            Command="{Binding DataContext.DeleteMemberCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                            BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                                </Grid>
 
                                 <!-- Email -->
                                 <TextBlock Text="{Binding Email, Mode=OneWay}"
@@ -83,12 +168,18 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Prihodi"
-                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding TotalIncome, StringFormat={}{0:N2} €, Mode=OneWay}"
-                                               FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{StaticResource AccentGreenBrush}"/>
+                                    <TextBlock Grid.Column="0" Text="Prihodi" FontSize="13"
+                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentGreenBrush}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="TotalIncome" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
                                 </Grid>
 
                                 <Grid Margin="0,0,0,8">
@@ -96,12 +187,18 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Rashodi"
-                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding TotalSpent, StringFormat={}{0:N2} €, Mode=OneWay}"
-                                               FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{StaticResource AccentRedBrush}"/>
+                                    <TextBlock Grid.Column="0" Text="Rashodi" FontSize="13"
+                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentRedBrush}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="TotalSpent" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
                                 </Grid>
 
                                 <Grid>
@@ -109,12 +206,18 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Stanje"
-                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Balance, StringFormat={}{0:N2} €, Mode=OneWay}"
-                                               FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{Binding IsBalancePositive, Converter={StaticResource BoolToBrushConverter}}"/>
+                                    <TextBlock Grid.Column="0" Text="Stanje" FontSize="13"
+                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Grid.Column="1" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{Binding IsBalancePositive, Converter={StaticResource BoolToBrushConverter}}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="Balance" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
                                 </Grid>
 
                             </StackPanel>

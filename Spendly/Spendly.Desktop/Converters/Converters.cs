@@ -41,6 +41,24 @@ public class StringToBrushConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+// values: [decimal amount, decimal exchangeRate, string symbol]
+// optional 4th value: bool isIncome — adds +/- sign
+public class CurrencyConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values[0] is not decimal amount || values[1] is not decimal rate || values[2] is not string symbol)
+            return "";
+        var converted = amount * rate;
+        if (values.Length == 4 && values[3] is bool isIncome)
+            return isIncome ? $"+{converted:N2} {symbol}" : $"-{converted:N2} {symbol}";
+        return $"{converted:N2} {symbol}";
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 public class BoolToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

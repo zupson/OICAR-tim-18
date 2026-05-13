@@ -33,19 +33,6 @@
           "SelectedChildIndex": 7,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "BudgetViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
-              "RelativeDocumentMoniker": "Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
-              "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
-              "RelativeToolTip": "Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T23:50:48.408Z",
-              "EditorCaption": ""
-            },
-            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
@@ -59,6 +46,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BudgetViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
+              "RelativeDocumentMoniker": "Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
+              "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
+              "RelativeToolTip": "Spendly.Desktop\\ViewModels\\BudgetViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T23:50:48.408Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
               "Title": "BudgetView.xaml",
               "DocumentMoniker": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\Views\\BudgetView.xaml",
@@ -66,8 +65,7 @@
               "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\Views\\BudgetView.xaml",
               "RelativeToolTip": "Spendly.Desktop\\Views\\BudgetView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:50:26.446Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-12T23:50:26.446Z"
             },
             {
               "$type": "Document",
@@ -79,8 +77,7 @@
               "RelativeToolTip": "Spendly.Desktop\\Views\\BudgetView.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T23:50:25.049Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-12T23:50:25.049Z"
             },
             {
               "$type": "Document",
@@ -91,8 +88,7 @@
               "ToolTip": "C:\\Users\\Luka\\Desktop\\OICAR\\Spendly\\OICAR-tim-18\\Spendly\\Spendly.Desktop\\Views\\SettingsView.xaml",
               "RelativeToolTip": "Spendly.Desktop\\Views\\SettingsView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:31:12.447Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-12T23:31:12.447Z"
             },
             {
               "$type": "Document",

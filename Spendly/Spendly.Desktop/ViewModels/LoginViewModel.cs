@@ -11,6 +11,13 @@ public partial class LoginViewModel : ObservableObject
 
     public event Action? LoginSucceeded;
 
+    // Hardcoded credentials — replace with API call later
+    private static readonly (string User, string Pass)[] ValidUsers =
+    [
+        ("user",  "user123"),
+        ("admin", "Admin123"),
+    ];
+
     [RelayCommand]
     private void Login()
     {
@@ -19,6 +26,13 @@ public partial class LoginViewModel : ObservableObject
             ErrorMessage = "Unesite korisničko ime i lozinku.";
             return;
         }
+
+        if (!ValidUsers.Any(u => u.User == Username && u.Pass == Password))
+        {
+            ErrorMessage = "Pogrešno korisničko ime ili lozinka.";
+            return;
+        }
+
         ErrorMessage = string.Empty;
         LoginSucceeded?.Invoke();
     }

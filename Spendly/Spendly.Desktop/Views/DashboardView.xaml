@@ -12,18 +12,24 @@
                        Margin="0,0,0,24"/>
 
             <!-- Summary cards -->
-            <UniformGrid Columns="4" Margin="0,0,0,0">
+            <UniformGrid Columns="4" Margin="0,0,0,24">
 
                 <Border Background="{StaticResource BgCardBrush}"
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                         CornerRadius="8" Margin="0,0,12,0" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Ukupni prihodi"
-                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
-                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Ukupni prihodi" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
                         <TextBlock FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource AccentGreenBrush}"
-                                   Text="{Binding TotalIncome, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                                   Foreground="{StaticResource AccentGreenBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="TotalIncome" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -31,12 +37,18 @@
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                         CornerRadius="8" Margin="0,0,12,0" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Ukupni rashodi"
-                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
-                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Ukupni rashodi" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
                         <TextBlock FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource AccentRedBrush}"
-                                   Text="{Binding TotalExpenses, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                                   Foreground="{StaticResource AccentRedBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="TotalExpenses" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -44,12 +56,18 @@
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                         CornerRadius="8" Margin="0,0,12,0" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Stanje"
-                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
-                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Stanje" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
                         <TextBlock FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource AccentBlueBrush}"
-                                   Text="{Binding Balance, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                                   Foreground="{StaticResource AccentBlueBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="Balance" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
@@ -57,16 +75,82 @@
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                         CornerRadius="8" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Zajednički rashodi"
-                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
-                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Zajednički rashodi" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
                         <TextBlock FontSize="26" FontWeight="Bold"
-                                   Foreground="{StaticResource AccentAmberBrush}"
-                                   Text="{Binding SharedExpenses, StringFormat={}{0:N2} €, Mode=OneWay}"/>
+                                   Foreground="{StaticResource AccentAmberBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="SharedExpenses" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
                 </Border>
 
             </UniformGrid>
+
+            <!-- Recent transactions -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="20">
+                <StackPanel>
+
+                    <TextBlock Text="Nedavne transakcije"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Margin="0,0,0,16"/>
+
+                    <ItemsControl ItemsSource="{Binding RecentTransactions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="110"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}, Mode=OneWay}"
+                                               FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                                               VerticalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Description, Mode=OneWay}"
+                                               FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                    <Border Grid.Column="2" VerticalAlignment="Center"
+                                            Background="#1e3a5f" CornerRadius="4"
+                                            Padding="8,3" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Category, Mode=OneWay}"
+                                                   FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    </Border>
+
+                                    <TextBlock Grid.Column="3"
+                                               FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{Binding IsIncome, Converter={StaticResource BoolToBrushConverter}}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="IsIncome" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>
