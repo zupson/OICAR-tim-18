@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Spendly.Desktop.ViewModels;
 
@@ -24,5 +25,11 @@ public partial class LoginWindow : Window
     {
         if (DataContext is LoginViewModel vm)
             vm.Password = PasswordBox.Password;
+    }
+
+    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && DataContext is LoginViewModel vm)
+            vm.LoginCommand.Execute(null);
     }
 }

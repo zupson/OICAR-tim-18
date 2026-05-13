@@ -27,7 +27,7 @@ public partial class App : Application
         sc.AddTransient<LoginViewModel>();
 
         sc.AddTransient<LoginWindow>();
-        sc.AddSingleton<MainWindow>();
+        sc.AddTransient<MainWindow>();
 
         Services = sc.BuildServiceProvider();
 

@@ -40,4 +40,34 @@ public partial class MockDataService : ObservableObject
 
     private int _nextTransactionId = 11;
     public int NextTransactionId() => _nextTransactionId++;
+
+    public ObservableCollection<string> Categories { get; } = [];
+
+    public MockDataService()
+    {
+        Transactions.CollectionChanged += (_, _) => { RecalculateBudgetSpent(); RefreshCategories(); };
+        Budgets.CollectionChanged      += (_, _) => RefreshCategories();
+        RefreshCategories();
+    }
+
+    private void RecalculateBudgetSpent()
+    {
+        foreach (var budget in Budgets)
+            budget.Spent = Transactions
+                .Where(t => t.Type == TransactionType.Expense &&
+                            string.Equals(t.Category, budget.Category, StringComparison.OrdinalIgnoreCase))
+                .Sum(t => t.Amount);
+    }
+
+    private void RefreshCategories()
+    {
+        var all = Transactions.Select(t => t.Category)
+            .Concat(Budgets.Select(b => b.Category))
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(c => c);
+
+        Categories.Clear();
+        foreach (var c in all) Categories.Add(c);
+    }
 }

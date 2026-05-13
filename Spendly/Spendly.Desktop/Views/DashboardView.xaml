@@ -92,6 +92,71 @@
 
             </UniformGrid>
 
+            <!-- Category spending chart -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="20" Margin="0,0,0,24">
+                <StackPanel>
+
+                    <TextBlock Text="Rashodi po kategorijama"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Margin="0,0,0,16"/>
+
+                    <TextBlock Text="Nema rashoda za prikaz."
+                               Visibility="{Binding HasNoCategories, Converter={StaticResource BoolToVisibility}}"
+                               FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+
+                    <ItemsControl ItemsSource="{Binding TopCategories}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="{Binding Category}"
+                                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                    <ProgressBar Grid.Column="1" Value="{Binding BarPercent}" Maximum="100"
+                                                 Height="10" Margin="12,0"
+                                                 Foreground="{StaticResource AccentBlueBrush}"
+                                                 BorderThickness="0" VerticalAlignment="Center">
+                                        <ProgressBar.Template>
+                                            <ControlTemplate TargetType="ProgressBar">
+                                                <Border x:Name="PART_Track" Background="#1e3a5f" CornerRadius="4" ClipToBounds="True">
+                                                    <Border x:Name="PART_Indicator"
+                                                            Background="{TemplateBinding Foreground}"
+                                                            HorizontalAlignment="Left" CornerRadius="4"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+                                    </ProgressBar>
+
+                                    <TextBlock Grid.Column="2"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentRedBrush}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Border>
+
             <!-- Recent transactions -->
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
@@ -102,6 +167,11 @@
                                FontSize="16" FontWeight="SemiBold"
                                Foreground="{StaticResource TextPrimaryBrush}"
                                Margin="0,0,0,16"/>
+
+                    <TextBlock Text="Nema nedavnih transakcija."
+                               Visibility="{Binding HasNoRecentTransactions, Converter={StaticResource BoolToVisibility}}"
+                               FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" Margin="0,16,0,0"/>
 
                     <ItemsControl ItemsSource="{Binding RecentTransactions}">
                         <ItemsControl.ItemTemplate>

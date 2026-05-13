@@ -17,15 +17,24 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bg" Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-                        </Border>
+                        <Grid>
+                            <Border x:Name="ActiveBar" Width="3" HorizontalAlignment="Left"
+                                    Background="{StaticResource AccentBlueBrush}" Visibility="Collapsed"/>
+                            <Border x:Name="Bg" Background="{TemplateBinding Background}"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bg" Property="Background" Value="#112244"/>
                                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
                             </Trigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#112244"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                <Setter TargetName="ActiveBar" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -54,26 +63,35 @@
                                Foreground="{StaticResource AccentBlueBrush}"/>
                 </Border>
 
-                <!-- User info -->
+                <!-- User info + logout -->
                 <Border DockPanel.Dock="Bottom" Padding="16,12"
                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0">
-                    <TextBlock Text="{Binding LoggedInUser}"
-                               FontSize="13"
-                               Foreground="{StaticResource TextMutedBrush}"/>
+                    <Grid>
+                        <TextBlock Text="{Binding LoggedInUser}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   VerticalAlignment="Center"/>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Content="Odjava"
+                                Command="{Binding LogoutCommand}"
+                                Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                Padding="10,4" FontSize="11" Cursor="Hand"/>
+                    </Grid>
                 </Border>
 
                 <!-- Nav items -->
                 <StackPanel DockPanel.Dock="Top" Margin="0,8,0,0">
                     <Button Content="  Nadzorna ploča" Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateDashboardCommand}"/>
+                            Command="{Binding NavigateDashboardCommand}" Tag="{Binding IsDashboardActive}"/>
                     <Button Content="  Proračun"       Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateBudgetCommand}"/>
+                            Command="{Binding NavigateBudgetCommand}"    Tag="{Binding IsBudgetActive}"/>
                     <Button Content="  Izvještaji"     Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateReportsCommand}"/>
+                            Command="{Binding NavigateReportsCommand}"   Tag="{Binding IsReportsActive}"/>
                     <Button Content="  Obitelj"        Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateFamilyCommand}"/>
+                            Command="{Binding NavigateFamilyCommand}"    Tag="{Binding IsFamilyActive}"/>
                     <Button Content="  Postavke"       Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateSettingsCommand}"/>
+                            Command="{Binding NavigateSettingsCommand}"  Tag="{Binding IsSettingsActive}"/>
                 </StackPanel>
 
             </DockPanel>

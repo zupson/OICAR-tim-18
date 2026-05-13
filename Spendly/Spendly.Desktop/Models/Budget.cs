@@ -23,7 +23,12 @@ public partial class Budget : ObservableObject
 
     [ObservableProperty] private decimal _editLimit;
 
-    public bool IsNotEditing      => !IsEditing;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotConfirmingDelete))]
+    private bool _isConfirmingDelete;
+
+    public bool IsNotConfirmingDelete => !IsConfirmingDelete;
+    public bool IsNotEditing          => !IsEditing;
     public decimal Remaining      => Limit - Spent;
     public decimal RemainingAbsolute => Math.Abs(Remaining);
     public bool IsOverBudget      => Spent > Limit;

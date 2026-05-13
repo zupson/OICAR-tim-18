@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using Spendly.Desktop.Models;
 
@@ -68,4 +70,29 @@ public class BoolToBrushConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotSupportedException();
+}
+
+public static class NumericInput
+{
+    public static readonly DependencyProperty OnlyProperty =
+        DependencyProperty.RegisterAttached("Only", typeof(bool), typeof(NumericInput),
+            new PropertyMetadata(false, OnOnlyChanged));
+
+    public static bool GetOnly(DependencyObject obj) => (bool)obj.GetValue(OnlyProperty);
+    public static void SetOnly(DependencyObject obj, bool value) => obj.SetValue(OnlyProperty, value);
+
+    private static void OnOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not TextBox tb) return;
+        if ((bool)e.NewValue) tb.PreviewTextInput += Block;
+        else                  tb.PreviewTextInput -= Block;
+    }
+
+    private static void Block(object sender, TextCompositionEventArgs e)
+    {
+        var tb = (TextBox)sender;
+        if (e.Text.All(char.IsDigit)) return;
+        if ((e.Text == "." || e.Text == ",") && !tb.Text.Contains('.') && !tb.Text.Contains(',')) return;
+        e.Handled = true;
+    }
 }

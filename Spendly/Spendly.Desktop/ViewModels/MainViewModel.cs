@@ -5,8 +5,16 @@ namespace Spendly.Desktop.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    [ObservableProperty] private ObservableObject _currentPage;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDashboardActive), nameof(IsBudgetActive), nameof(IsReportsActive), nameof(IsFamilyActive), nameof(IsSettingsActive))]
+    private ObservableObject _currentPage;
     [ObservableProperty] private string _loggedInUser = string.Empty;
+
+    public bool IsDashboardActive => CurrentPage is DashboardViewModel;
+    public bool IsBudgetActive    => CurrentPage is BudgetViewModel;
+    public bool IsReportsActive   => CurrentPage is ReportsViewModel;
+    public bool IsFamilyActive    => CurrentPage is FamilyViewModel;
+    public bool IsSettingsActive  => CurrentPage is SettingsViewModel;
 
     public MainViewModel(
         DashboardViewModel dashboard,
@@ -34,4 +42,9 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand] private void NavigateReports()   => CurrentPage = Reports;
     [RelayCommand] private void NavigateFamily()    => CurrentPage = Family;
     [RelayCommand] private void NavigateSettings()  => CurrentPage = Settings;
+
+    public event Action? LogoutRequested;
+
+    [RelayCommand]
+    private void Logout() => LogoutRequested?.Invoke();
 }
