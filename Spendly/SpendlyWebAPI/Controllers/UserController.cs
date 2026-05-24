@@ -118,7 +118,7 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "GeneralAdmin")]
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpPut("[action]")]
         public async Task<IActionResult> EditPerson(int id, EditUserDto dto)
         {

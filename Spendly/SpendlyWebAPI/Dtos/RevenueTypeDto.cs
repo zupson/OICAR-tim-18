@@ -7,6 +7,9 @@ namespace SpendlyWebAPI.Dtos
         [Required]
         [MaxLength(150)]
         public string Name { get; set; }
+        [Required]
+        [Range(0, int.MaxValue)]
+        public int GroupId { get; set; }
     }
     public class EditRevenueTypeDto
     {
@@ -18,5 +21,7 @@ namespace SpendlyWebAPI.Dtos
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+        public int GroupId { get; set; }
+
     }
 }

@@ -45,31 +45,20 @@ namespace SpendlyWebAPI.Controllers
             }
         }
 
-        //[HttpPost("[action]/{groupId}")]
-        //public async Task<ActionResult<ResponseUserGroupDto>> CreateNewUserGroup(int groupId)
-        //{
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //            return BadRequest(ModelState);
-
-        //        var newUserGroup = await _userGroupService.CreateAsync(groupId);
-
-        //        return CreatedAtAction(nameof(GetUserGroupById), new { id = newUserGroup.Id }, newUserGroup);
-        //    }
-        //    catch (KeyNotFoundException ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
+        [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<ResponseUserGroupDto>> GetMemebersByGroup(int id)
+        {
+            try
+            {
+                var findUserGroup = await _userGroupService.GetMembersByGroup(id);
+                return Ok(findUserGroup);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
 
         [Authorize(Roles = "GeneralAdmin,User")]

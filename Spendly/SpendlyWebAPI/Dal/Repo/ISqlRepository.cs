@@ -2,7 +2,7 @@
 {
     public interface ISqlRepository<TResponseDto, TCreateDto, TEditDto>
     {
-        Task<IEnumerable<TResponseDto>> GetAllAsync();
+        Task<IEnumerable<TResponseDto>> GetAllAsync(int? id = null);
         Task<TResponseDto?> GetByIdAsync(int id);
         Task<TResponseDto> CreateAsync(TCreateDto dto);
         Task<bool> EditAsync(int id, TEditDto dto);

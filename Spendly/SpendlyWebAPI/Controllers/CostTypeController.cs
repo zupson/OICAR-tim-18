@@ -18,11 +18,11 @@ namespace SpendlyWebAPI.Controllers
 
         [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<ResponseCostTypeDto>>> GetAllCostTypes()
+        public async Task<ActionResult<IEnumerable<ResponseCostTypeDto>>> GetAllCostTypesByGroup([FromQuery] int groupId)
         {
             try
             {
-                var allCostTypes = await _costTypeService.GetAllAsync();
+                var allCostTypes = await _costTypeService.GetAllAsync(groupId);
                 return Ok(allCostTypes);
             }
             catch (Exception ex)
@@ -97,6 +97,10 @@ namespace SpendlyWebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -117,6 +121,10 @@ namespace SpendlyWebAPI.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {

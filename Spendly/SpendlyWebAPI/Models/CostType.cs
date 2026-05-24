@@ -9,5 +9,9 @@ public partial class CostType
 
     public string Name { get; set; } = null!;
 
+    public int GroupId { get; set; }
+
     public virtual ICollection<Cost> Costs { get; set; } = new List<Cost>();
+
+    public virtual Group Group { get; set; } = null!;
 }

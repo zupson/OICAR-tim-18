@@ -2,23 +2,32 @@
 using SpendlyWebAPI.Dal.Repo;
 using SpendlyWebAPI.Dtos;
 using SpendlyWebAPI.Models;
+using System.Security.Claims;
 
 namespace SpendlyWebAPI.Services
 {
     public class CostTypeService : ISqlRepository<ResponseCostTypeDto, CreateCostTypeDto, EditCostTypeDto>
     {
         private readonly SpendlyDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CostTypeService(SpendlyDbContext context)
+
+        public CostTypeService(SpendlyDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        private int GetCurrentUserId()
+           => int.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
 
         public async Task<ResponseCostTypeDto> CreateAsync(CreateCostTypeDto dto)
         {
             var costType = new CostType
             {
                 Name = dto.Name,
+                GroupId = dto.GroupId
             };
 
             _context.CostTypes.Add(costType);
@@ -28,6 +37,7 @@ namespace SpendlyWebAPI.Services
             {
                 Id = costType.Id,
                 Name = costType.Name,
+                GroupId = dto.GroupId
             };
         }
 
@@ -35,6 +45,14 @@ namespace SpendlyWebAPI.Services
         {
             var costType = await _context.CostTypes.FindAsync(id);
             if (costType == null) return false;
+            int userId = GetCurrentUserId();
+            bool isInGroup = await _context.UserGroups
+                .AnyAsync(ug => ug.GroupId == costType.GroupId && ug.UserId == userId);
+
+            if (!isInGroup)
+                throw new UnauthorizedAccessException("Nemate pristup ovoj kategoriji.");
+
+
             _context.CostTypes.Remove(costType);
             await _context.SaveChangesAsync();
             return true;
@@ -45,19 +63,29 @@ namespace SpendlyWebAPI.Services
             var costType = await _context.CostTypes.FindAsync(id);
             if (costType == null) return false;
 
+            int userId = GetCurrentUserId();
+            bool isInGroup = await _context.UserGroups
+                .AnyAsync(ug => ug.GroupId == costType.GroupId && ug.UserId == userId);
+
+            if (!isInGroup)
+                throw new UnauthorizedAccessException("Nemate pristup ovoj kategoriji.");
+
+
             costType.Name = dto.Name;
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<IEnumerable<ResponseCostTypeDto>> GetAllAsync()
+        public async Task<IEnumerable<ResponseCostTypeDto>> GetAllAsync(int? id = null)
         {
             return await _context.CostTypes
-                .Select(s => new ResponseCostTypeDto
+                .Where(ct => ct.GroupId == id)
+                .Select(ct => new ResponseCostTypeDto
                 {
-                    Id = s.Id,
-                    Name = s.Name
+                    Id = ct.Id,
+                    Name = ct.Name,
+                    GroupId = ct.GroupId
                 }).ToListAsync();
         }
 
@@ -69,7 +97,8 @@ namespace SpendlyWebAPI.Services
             return new ResponseCostTypeDto
             {
                 Id = costType.Id,
-                Name = costType.Name
+                Name = costType.Name,
+                GroupId = costType.GroupId
             };
         }
     }
