@@ -6,17 +6,16 @@ using Spendly.Desktop.ViewModels;
 
 namespace Spendly.Desktop.Views;
 
-public partial class LoginWindow : Window
+public partial class RegisterWindow : Window
 {
-    public LoginWindow(LoginViewModel vm)
+    public RegisterWindow(RegisterViewModel vm)
     {
         InitializeComponent();
         DataContext = vm;
 
-        vm.LoginSucceeded += async (fullName) =>
+        vm.RegisterSucceeded += async (fullName) =>
         {
             vm.IsLoading = true;
-            bool loadFailed = false;
             try
             {
                 var api  = App.Services.GetRequiredService<ApiService>();
@@ -25,12 +24,8 @@ public partial class LoginWindow : Window
             }
             catch (Exception ex)
             {
-                loadFailed = true;
-                vm.DataLoadWarning = "Upozorenje: podaci nisu mogli biti učitani.";
                 System.Diagnostics.Debug.WriteLine($"Data load failed: {ex.Message}");
             }
-            if (loadFailed) await Task.Delay(1500);
-            vm.DataLoadWarning = string.Empty;
             vm.IsLoading = false;
 
             var mainWindow = App.Services.GetRequiredService<MainWindow>();
@@ -47,19 +42,25 @@ public partial class LoginWindow : Window
 
     private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
     {
-        if (DataContext is LoginViewModel vm)
+        if (DataContext is RegisterViewModel vm)
             vm.Password = PasswordBox.Password;
+    }
+
+    private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is RegisterViewModel vm)
+            vm.ConfirmPassword = ConfirmPasswordBox.Password;
     }
 
     private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter && DataContext is LoginViewModel vm)
-            vm.LoginCommand.Execute(null);
+        if (e.Key == Key.Enter && DataContext is RegisterViewModel vm)
+            vm.RegisterCommand.Execute(null);
     }
 
-    private void Register_Click(object sender, RoutedEventArgs e)
+    private void BackToLogin_Click(object sender, RoutedEventArgs e)
     {
-        App.Services.GetRequiredService<RegisterWindow>().Show();
+        App.Services.GetRequiredService<LoginWindow>().Show();
         Close();
     }
 }

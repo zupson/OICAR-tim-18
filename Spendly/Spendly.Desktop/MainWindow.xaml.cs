@@ -1,5 +1,6 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using Spendly.Desktop.Services;
 using Spendly.Desktop.ViewModels;
 using Spendly.Desktop.Views;
 
@@ -16,6 +17,8 @@ public partial class MainWindow : Window
         logoutHandler = () =>
         {
             vm.LogoutRequested -= logoutHandler;
+            App.Services.GetRequiredService<ApiService>().Reset();
+            App.Services.GetRequiredService<DataCache>().Reset();
             App.Services.GetRequiredService<LoginWindow>().Show();
             Close();
         };

@@ -16,7 +16,7 @@ public partial class BudgetView : UserControl
                 vm.PropertyChanged += (_, e) =>
                 {
                     if (e.PropertyName == nameof(BudgetViewModel.IsAddFormOpen) && vm.IsAddFormOpen)
-                        Dispatcher.BeginInvoke(() => BudgetNameField.Focus(), DispatcherPriority.Input);
+                        Dispatcher.BeginInvoke(() => BudgetYearField.Focus(), DispatcherPriority.Input);
                 };
         };
     }

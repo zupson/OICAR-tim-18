@@ -1,0 +1,367 @@
+<UserControl x:Class="Spendly.Desktop.Views.ReportsChartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Spendly.Desktop.ViewModels"
+             Background="{StaticResource BgDeepBrush}">
+
+    <UserControl.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background"      Value="{StaticResource BgCardBrush}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource AppBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="10"/>
+            <Setter Property="Padding"         Value="16"/>
+        </Style>
+        <Style x:Key="MonthBtn" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#0d2240"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StatCard" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Padding" Value="16,12"/>
+        </Style>
+        <Style x:Key="ThCell" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="Padding"    Value="12,8"/>
+        </Style>
+        <Style x:Key="TdCell" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Padding"    Value="12,10"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Izvještaji" FontSize="24" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+            <TextBlock Text="{Binding HeaderLabel}" FontSize="12"
+                       Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,16"/>
+
+            <!-- Month pills -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="4" Margin="0,0,0,20">
+                <ItemsControl ItemsSource="{Binding MonthPills}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:MonthPill}">
+                            <Button Style="{StaticResource MonthBtn}"
+                                    Content="{Binding Label}"
+                                    Tag="{Binding IsSelected}"
+                                    Command="{Binding DataContext.SelectPillCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <!-- 3 stat cards -->
+            <UniformGrid Columns="3" Margin="0,0,0,20">
+                <Border Style="{StaticResource StatCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Ukupni prihodi" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                        <TextBlock FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="TotalIncome"/>
+                                    <Binding Path="ExchangeRate"/>
+                                    <Binding Path="CurrencySymbol"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Ukupni troškovi" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                        <TextBlock FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentRedBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="TotalExpense"/>
+                                    <Binding Path="ExchangeRate"/>
+                                    <Binding Path="CurrencySymbol"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="Neto stanje" FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,4"/>
+                        <TextBlock FontSize="20" FontWeight="Bold"
+                                   Foreground="{Binding IsNetPositive, Converter={StaticResource BoolToBrushConverter}}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="NetBalance"/>
+                                    <Binding Path="ExchangeRate"/>
+                                    <Binding Path="CurrencySymbol"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Category charts row -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Expenses by category -->
+                <Border Style="{StaticResource Card}" Grid.Column="0">
+                    <StackPanel>
+                        <TextBlock Text="Troškovi po kategorijama" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+                        <ItemsControl ItemsSource="{Binding ExpByCategory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:CatBar}">
+                                    <StackPanel Margin="0,0,0,12">
+                                        <Grid Margin="0,0,0,4">
+                                            <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                        <Binding Path="Amount"/>
+                                                        <Binding Path="Rate"/>
+                                                        <Binding Path="Symbol"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                        <Grid Height="6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{Binding Pct,       Converter={StaticResource IntToGridLength}}"/>
+                                                <ColumnDefinition Width="{Binding Remaining,  Converter={StaticResource IntToGridLength}}"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Background="{Binding Color, Converter={StaticResource StringToBrushConverter}}" CornerRadius="3"/>
+                                            <Border Grid.Column="1" Background="#1e3a5f" CornerRadius="3"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="Nema troškova." FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                   Visibility="{Binding HasNoExpByCat, Converter={StaticResource BoolToVisibility}}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Revenues by category -->
+                <Border Style="{StaticResource Card}" Grid.Column="2">
+                    <StackPanel>
+                        <TextBlock Text="Prihodi po kategorijama" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+                        <ItemsControl ItemsSource="{Binding IncByCategory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:CatBar}">
+                                    <StackPanel Margin="0,0,0,12">
+                                        <Grid Margin="0,0,0,4">
+                                            <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            <TextBlock HorizontalAlignment="Right" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                        <Binding Path="Amount"/>
+                                                        <Binding Path="Rate"/>
+                                                        <Binding Path="Symbol"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                        <Grid Height="6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{Binding Pct,       Converter={StaticResource IntToGridLength}}"/>
+                                                <ColumnDefinition Width="{Binding Remaining,  Converter={StaticResource IntToGridLength}}"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Background="{Binding Color, Converter={StaticResource StringToBrushConverter}}" CornerRadius="3"/>
+                                            <Border Grid.Column="1" Background="#1e3a5f" CornerRadius="3"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="Nema prihoda." FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                   Visibility="{Binding HasNoIncByCat, Converter={StaticResource BoolToVisibility}}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Trend chart -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Trend — 6 mj." FontSize="13" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+                    <ItemsControl ItemsSource="{Binding Trend}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:TrendPoint}">
+                                <StackPanel Width="70" HorizontalAlignment="Center">
+                                    <Grid Height="80" Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="4"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Income bar -->
+                                        <Grid Grid.Column="0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{Binding IncRemaining, Converter={StaticResource IntToGridLength}}"/>
+                                                <RowDefinition Height="{Binding IncH,         Converter={StaticResource IntToGridLength}}"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="1" Background="#22C55E" CornerRadius="2,2,0,0"/>
+                                        </Grid>
+                                        <!-- Expense bar -->
+                                        <Grid Grid.Column="2">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="{Binding ExpRemaining, Converter={StaticResource IntToGridLength}}"/>
+                                                <RowDefinition Height="{Binding ExpH,         Converter={StaticResource IntToGridLength}}"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="1" Background="#EF4444" CornerRadius="2,2,0,0"/>
+                                        </Grid>
+                                    </Grid>
+                                    <TextBlock Text="{Binding Label}" HorizontalAlignment="Center"
+                                               FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Border Width="10" Height="10" Background="#22C55E" CornerRadius="2" Margin="0,0,4,0"/>
+                        <TextBlock Text="Prihodi" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,16,0"/>
+                        <Border Width="10" Height="10" Background="#EF4444" CornerRadius="2" Margin="0,0,4,0"/>
+                        <TextBlock Text="Troškovi" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Breakdown table -->
+            <Border Style="{StaticResource Card}" Padding="0">
+                <StackPanel>
+                    <StackPanel Margin="16,14,16,8">
+                        <TextBlock Text="Detaljna raščlamba" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="Sve transakcije ovog mjeseca" FontSize="11"
+                                   Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <!-- Header row -->
+                    <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Opis"       Style="{StaticResource ThCell}"/>
+                            <TextBlock Grid.Column="1" Text="Kategorija" Style="{StaticResource ThCell}"/>
+                            <TextBlock Grid.Column="2" Text="Datum"      Style="{StaticResource ThCell}"/>
+                            <TextBlock Grid.Column="3" Text="Vrsta"      Style="{StaticResource ThCell}"/>
+                            <TextBlock Grid.Column="4" Text="Iznos"      Style="{StaticResource ThCell}" TextAlignment="Right"/>
+                        </Grid>
+                    </Border>
+                    <ItemsControl ItemsSource="{Binding Breakdown}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:BreakdownRow}">
+                                <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Desc}" Style="{StaticResource TdCell}"
+                                                   Foreground="{StaticResource TextPrimaryBrush}" FontWeight="Medium" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Cat}"     Style="{StaticResource TdCell}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding DateStr}" Style="{StaticResource TdCell}"/>
+                                        <Border Grid.Column="3" Padding="12,10" VerticalAlignment="Center">
+                                            <Border Padding="6,2" CornerRadius="4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{StaticResource ExpenseBadgeBgBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsIncome}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource IncomeBadgeBgBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontSize="11" FontWeight="SemiBold">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text"       Value="Trošak"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsIncome}" Value="True">
+                                                                    <Setter Property="Text"       Value="Prihod"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </Border>
+                                        <TextBlock Grid.Column="4" Style="{StaticResource TdCell}" TextAlignment="Right" FontWeight="Bold">
+                                            <TextBlock.Foreground>
+                                                <Binding Path="IsIncome" Converter="{StaticResource BoolToBrushConverter}"/>
+                                            </TextBlock.Foreground>
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                    <Binding Path="Amount"/>
+                                                    <Binding Path="Rate"/>
+                                                    <Binding Path="Symbol"/>
+                                                    <Binding Path="IsIncome"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="Nema podataka za ovaj mjesec." TextAlignment="Center"
+                               Padding="24" FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                               Visibility="{Binding HasNoBreakdown, Converter={StaticResource BoolToVisibility}}"/>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

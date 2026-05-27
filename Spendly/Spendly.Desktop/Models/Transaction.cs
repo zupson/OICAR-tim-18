@@ -5,12 +5,14 @@ namespace Spendly.Desktop.Models;
 public partial class Transaction : ObservableObject
 {
     public int Id { get; set; }
+    public int TypeId { get; set; }
     public decimal Amount { get; set; }
     public string Description { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public DateTime Date { get; set; }
     public TransactionType Type { get; set; }
     public TransactionScope Scope { get; set; }
+    public bool IsApiRevenue { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotConfirmingDelete))]

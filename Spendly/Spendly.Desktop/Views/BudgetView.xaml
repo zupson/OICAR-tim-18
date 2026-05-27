@@ -36,14 +36,14 @@
                     KeyDown="Form_KeyDown"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                    CornerRadius="12" Padding="20" Margin="0,0,0,16">
                 <StackPanel>
                     <TextBlock Text="Novi proračun" FontSize="15" FontWeight="SemiBold"
                                Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
 
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="16"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="16"/>
@@ -51,21 +51,21 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Naziv" FontSize="12"
+                            <TextBlock Text="Godina" FontSize="12"
                                        Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <TextBox x:Name="BudgetNameField"
-                                     Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBox x:Name="BudgetYearField"
+                                     Text="{Binding NewYear, UpdateSourceTrigger=PropertyChanged}"
+                                     conv:NumericInput.Only="True"
                                      Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
                                      BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                                      Padding="10,8" FontSize="13"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
-                            <TextBlock Text="Kategorija" FontSize="12"
+                            <TextBlock Text="Mjesec" FontSize="12"
                                        Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <ComboBox ItemsSource="{Binding Categories}"
-                                      Text="{Binding NewCategory, UpdateSourceTrigger=PropertyChanged}"
-                                      IsEditable="True"/>
+                            <ComboBox ItemsSource="{Binding MonthNames}"
+                                      SelectedIndex="{Binding NewMonthIndex}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="4">
@@ -98,7 +98,7 @@
                     <DataTemplate>
                         <Border Background="{StaticResource BgCardBrush}"
                                 BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                                CornerRadius="8" Padding="20" Margin="0,0,0,12">
+                                CornerRadius="12" Padding="20" Margin="0,0,0,12">
                             <StackPanel>
 
                                 <!-- View mode -->
@@ -247,7 +247,7 @@
             <Border Visibility="{Binding HasNoBudgets, Converter={StaticResource BoolToVisibility}}"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="32">
+                    CornerRadius="12" Padding="32">
                 <TextBlock Text="Nema proračuna. Kliknite '+ Dodaj proračun' za početak."
                            FontSize="13" Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>

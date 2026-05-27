@@ -9,12 +9,12 @@ public record CategoryBar(string Category, decimal Amount, double BarPercent);
 
 public partial class DashboardViewModel : ObservableObject
 {
-    private readonly MockDataService _data;
+    private readonly DataCache _data;
 
     public string  CurrencySymbol => _data.CurrencySymbol;
     public decimal ExchangeRate   => _data.ExchangeRate;
 
-    public DashboardViewModel(MockDataService data)
+    public DashboardViewModel(DataCache data)
     {
         _data = data;
         _data.Transactions.CollectionChanged += OnTransactionsChanged;

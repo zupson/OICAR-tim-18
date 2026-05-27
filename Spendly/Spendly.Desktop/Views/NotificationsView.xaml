@@ -1,0 +1,118 @@
+<UserControl x:Class="Spendly.Desktop.Views.NotificationsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BgDeepBrush}">
+
+    <UserControl.Resources>
+        <!-- Level accent colour — red / amber / blue -->
+        <Style x:Key="NotiCard" TargetType="Border">
+            <Setter Property="Background"      Value="{StaticResource BgCardBrush}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource AppBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="10"/>
+            <Setter Property="Margin"          Value="0,0,0,12"/>
+            <Setter Property="Padding"         Value="0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel MaxWidth="680" HorizontalAlignment="Left">
+
+            <TextBlock Text="Obavijesti" FontSize="24" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Upozorenja o proračunu i statusu aplikacije."
+                       FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,24"/>
+
+            <!-- Empty state -->
+            <Border Visibility="{Binding HasNoItems, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="10" Padding="32">
+                <TextBlock Text="Nema novih obavijesti."
+                           FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+            <!-- Notification list -->
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource NotiCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="4"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left accent strip — colour by level -->
+                                <Border Grid.Column="0" CornerRadius="10,0,0,10">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsWarning}"  Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentAmberBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsCritical}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentRedBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+                                <!-- Content -->
+                                <StackPanel Grid.Column="1" Margin="16,14,16,14">
+                                    <!-- Level badge + title row -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                        <Border CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#0a2a4a"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsWarning}"  Value="True">
+                                                            <Setter Property="Background" Value="#3a2a00"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsCritical}" Value="True">
+                                                            <Setter Property="Background" Value="#3a0f0f"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock FontSize="10" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text"       Value="INFO"/>
+                                                        <Setter Property="Foreground" Value="{StaticResource AccentBlueBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsWarning}"  Value="True">
+                                                                <Setter Property="Text"       Value="UPOZORENJE"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource AccentAmberBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsCritical}" Value="True">
+                                                                <Setter Property="Text"       Value="KRITIČNO"/>
+                                                                <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                        <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Detail}" FontSize="12"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

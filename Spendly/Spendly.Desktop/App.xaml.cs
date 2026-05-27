@@ -17,16 +17,22 @@ public partial class App : Application
         var sc = new ServiceCollection();
 
         sc.AddSingleton<SettingsService>();
-        sc.AddSingleton<MockDataService>();
+        sc.AddSingleton<ApiService>();
+        sc.AddSingleton<DataCache>();
         sc.AddSingleton<DashboardViewModel>();
         sc.AddSingleton<BudgetViewModel>();
         sc.AddSingleton<ReportsViewModel>();
         sc.AddSingleton<FamilyViewModel>();
         sc.AddSingleton<SettingsViewModel>();
+        sc.AddSingleton<CategoriesViewModel>();
+        sc.AddSingleton<ReportsChartViewModel>();
+        sc.AddSingleton<NotificationsViewModel>();
         sc.AddSingleton<MainViewModel>();
         sc.AddTransient<LoginViewModel>();
+        sc.AddTransient<RegisterViewModel>();
 
         sc.AddTransient<LoginWindow>();
+        sc.AddTransient<RegisterWindow>();
         sc.AddTransient<MainWindow>();
 
         Services = sc.BuildServiceProvider();
