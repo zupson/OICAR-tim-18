@@ -1,4 +1,4 @@
-<UserControl x:Class="Spendly.Desktop.Views.FamilyView"
+﻿<UserControl x:Class="Spendly.Desktop.Views.FamilyView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BgDeepBrush}">
@@ -6,7 +6,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
         <StackPanel>
 
-            <!-- Header row -->
+
             <Grid Margin="0,0,0,16">
                 <TextBlock Text="Obitelj" FontSize="24" FontWeight="Bold"
                            Foreground="{StaticResource TextPrimaryBrush}"
@@ -29,66 +29,51 @@
                 </Button>
             </Grid>
 
-            <!-- Add form -->
+
             <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
                     KeyDown="Form_KeyDown"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="20" Margin="0,0,0,16">
+                    CornerRadius="12" Padding="20" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Text="Novi član" FontSize="15" FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+                    <TextBlock Text="Pozovi člana obitelji" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Korisnik mora imati Spendly račun. Pozivnica će biti poslana na njegov email."
+                               FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,16"
+                               TextWrapping="Wrap"/>
 
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="140"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Ime i prezime" FontSize="12"
-                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <TextBox x:Name="MemberNameField"
-                                     Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
-                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
-                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                                     Padding="10,8" FontSize="13"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Email" FontSize="12"
-                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding NewEmail, UpdateSourceTrigger=PropertyChanged}"
-                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
-                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                                     Padding="10,8" FontSize="13"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Uloga" FontSize="12"
-                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                            <ComboBox ItemsSource="{Binding RoleOptions}"
-                                      SelectedItem="{Binding NewRole}"/>
-                        </StackPanel>
-                    </Grid>
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Email adresa" FontSize="12"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                        <TextBox x:Name="EmailField"
+                                 Text="{Binding NewEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                 BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                 Padding="10,8" FontSize="13"/>
+                    </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Dodaj" Command="{Binding AddMemberCommand}"
+                        <Button Content="Pošalji pozivnicu" Command="{Binding AddMemberCommand}"
                                 Background="{StaticResource AccentGreenBrush}"
                                 Foreground="White" BorderThickness="0"
                                 Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
                         <TextBlock Text="{Binding AddError, Mode=OneWay}"
                                    Foreground="{StaticResource AccentRedBrush}" FontSize="12"
-                                   VerticalAlignment="Center"
+                                   VerticalAlignment="Center" TextWrapping="Wrap"
                                    Visibility="{Binding AddError, Converter={StaticResource StringToVisibilityConverter}}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- Member cards -->
+
+            <Border Visibility="{Binding AddSuccess, Converter={StaticResource StringToVisibilityConverter}}"
+                    Background="#0a3320" BorderBrush="{StaticResource AccentGreenBrush}" BorderThickness="1"
+                    CornerRadius="8" Padding="16,10" Margin="0,0,0,16">
+                <TextBlock Text="{Binding AddSuccess}" Foreground="{StaticResource AccentGreenBrush}"
+                           FontSize="13" TextWrapping="Wrap"/>
+            </Border>
+
+
             <ItemsControl ItemsSource="{Binding Members}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -100,10 +85,10 @@
                         <Border Width="300"
                                 Background="{StaticResource BgCardBrush}"
                                 BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                                CornerRadius="8" Padding="20" Margin="0,0,16,16">
+                                CornerRadius="12" Padding="20" Margin="0,0,16,16">
                             <StackPanel>
 
-                                <!-- Avatar + name + role + delete -->
+
                                 <Grid Margin="0,0,0,16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -178,15 +163,15 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <!-- Email -->
+
                                 <TextBlock Text="{Binding Email, Mode=OneWay}"
                                            FontSize="12" Foreground="{StaticResource TextMutedBrush}"
                                            Margin="0,0,0,16"/>
 
-                                <!-- Divider -->
+
                                 <Border Height="1" Background="{StaticResource AppBorderBrush}" Margin="0,0,0,16"/>
 
-                                <!-- Stats -->
+
                                 <Grid Margin="0,0,0,8">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -253,7 +238,7 @@
             <Border Visibility="{Binding HasNoMembers, Converter={StaticResource BoolToVisibility}}"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                    CornerRadius="8" Padding="32">
+                    CornerRadius="12" Padding="32">
                 <TextBlock Text="Nema članova obitelji. Kliknite '+ Dodaj člana' za početak."
                            FontSize="13" Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>

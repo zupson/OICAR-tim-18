@@ -72,6 +72,44 @@ public class BoolToBrushConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+public class InverseBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is bool b ? !b : false;
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is bool b ? !b : false;
+}
+
+public class InverseBoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is true ? Visibility.Collapsed : Visibility.Visible;
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class StringToInitialsConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is not string s || string.IsNullOrWhiteSpace(s)) return "?";
+        var parts = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[1][0]}".ToUpper()
+            : s[0].ToString().ToUpper();
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class IntToGridLengthConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is int i && i > 0 ? new GridLength(i, GridUnitType.Star) : new GridLength(1, GridUnitType.Star);
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 public static class NumericInput
 {
     public static readonly DependencyProperty OnlyProperty =

@@ -16,7 +16,7 @@ public partial class FamilyView : UserControl
                 vm.PropertyChanged += (_, e) =>
                 {
                     if (e.PropertyName == nameof(FamilyViewModel.IsAddFormOpen) && vm.IsAddFormOpen)
-                        Dispatcher.BeginInvoke(() => MemberNameField.Focus(), DispatcherPriority.Input);
+                        Dispatcher.BeginInvoke(() => EmailField.Focus(), DispatcherPriority.Input);
                 };
         };
     }

@@ -27,6 +27,10 @@ public partial class Budget : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsNotConfirmingDelete))]
     private bool _isConfirmingDelete;
 
+    public int? ApiMonth        { get; set; }
+    public int? ApiYear         { get; set; }
+    public int? ApiUserGroupId  { get; set; }
+
     public bool IsNotConfirmingDelete => !IsConfirmingDelete;
     public bool IsNotEditing          => !IsEditing;
     public decimal Remaining      => Limit - Spent;

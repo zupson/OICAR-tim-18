@@ -11,22 +11,26 @@
         <conv:AlertLevelToBrushConverter x:Key="AlertLevelToBrushConverter"/>
         <conv:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
         <conv:StringToBrushConverter x:Key="StringToBrushConverter"/>
+        <conv:StringToInitialsConverter x:Key="StringToInitialsConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <conv:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+        <conv:IntToGridLengthConverter x:Key="IntToGridLength"/>
 
-        <!-- Color palette -->
         <SolidColorBrush x:Key="BgDeepBrush"    Color="#0D1B2A"/>
         <SolidColorBrush x:Key="BgCardBrush"     Color="#0F2744"/>
-        <SolidColorBrush x:Key="BgSidebarBrush"  Color="#0a1628"/>
+        <SolidColorBrush x:Key="BgSidebarBrush"  Color="#060e1a"/>
         <SolidColorBrush x:Key="AppBorderBrush"  Color="#1e3a5f"/>
         <SolidColorBrush x:Key="AccentBlueBrush" Color="#3B82F6"/>
         <SolidColorBrush x:Key="AccentGreenBrush" Color="#22C55E"/>
         <SolidColorBrush x:Key="AccentRedBrush"  Color="#EF4444"/>
         <SolidColorBrush x:Key="AccentAmberBrush" Color="#F59E0B"/>
+        <SolidColorBrush x:Key="IncomeBadgeBgBrush"  Color="#0a3320"/>
+        <SolidColorBrush x:Key="ExpenseBadgeBgBrush" Color="#3a0f0f"/>
         <SolidColorBrush x:Key="TextPrimaryBrush"  Color="#FFFFFF"/>
         <SolidColorBrush x:Key="TextSecondaryBrush" Color="#94a3b8"/>
         <SolidColorBrush x:Key="TextMutedBrush"    Color="#64748B"/>
 
-        <!-- ComboBox dark theme -->
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#1a3a5c"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -47,7 +51,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"/>
-                            <!-- Full-width toggle for non-editable click area -->
+
                             <ToggleButton x:Name="ToggleButton" Grid.ColumnSpan="2"
                                           Background="Transparent" BorderThickness="0"
                                           Focusable="False" ClickMode="Press"
@@ -58,17 +62,17 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-                            <!-- Drop arrow -->
+
                             <Path Grid.Column="1" IsHitTestVisible="False"
                                   Fill="{StaticResource TextMutedBrush}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
                                   Data="M0,0 L4,4 L8,0 Z"/>
-                            <!-- Non-editable display -->
+
                             <ContentPresenter Grid.Column="0" x:Name="ContentSite"
                                               Margin="{TemplateBinding Padding}"
                                               VerticalAlignment="Center" IsHitTestVisible="False"
                                               Content="{TemplateBinding SelectionBoxItem}"/>
-                            <!-- Editable text box -->
+
                             <TextBox Grid.Column="0" x:Name="PART_EditableTextBox"
                                      Background="Transparent"
                                      Foreground="{TemplateBinding Foreground}"
@@ -78,7 +82,7 @@
                                      VerticalAlignment="Center" MinWidth="0"
                                      IsReadOnly="{TemplateBinding IsReadOnly}"
                                      Visibility="Hidden"/>
-                            <!-- Dropdown popup -->
+
                             <Popup x:Name="PART_Popup" Grid.ColumnSpan="2"
                                    IsOpen="{TemplateBinding IsDropDownOpen}"
                                    AllowsTransparency="True" Focusable="False"
@@ -131,7 +135,6 @@
             </Setter>
         </Style>
 
-        <!-- DatePicker dark theme -->
         <Style TargetType="DatePicker">
             <Setter Property="Background" Value="#1a3a5c"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -167,7 +170,64 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
 
-        <!-- ViewModel → View wiring -->
+        <Style TargetType="TextBox">
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBlueBrush}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentBlueBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Background="Transparent"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="#2a4a6f" CornerRadius="3" Margin="1,0"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Background="Transparent"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="6"/>
+                    <Setter Property="Width" Value="Auto"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
             <views:DashboardView/>
         </DataTemplate>
@@ -182,6 +242,15 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <views:SettingsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CategoriesViewModel}">
+            <views:CategoriesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReportsChartViewModel}">
+            <views:ReportsChartView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:NotificationsViewModel}">
+            <views:NotificationsView/>
         </DataTemplate>
 
     </Application.Resources>

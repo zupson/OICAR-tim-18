@@ -1,84 +1,263 @@
-<UserControl x:Class="Spendly.Desktop.Views.SettingsView"
+﻿<UserControl x:Class="Spendly.Desktop.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BgDeepBrush}">
 
+    <UserControl.Resources>
+        <Style x:Key="TabBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#0d2240"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SectionCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BgCardBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="SectionSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="FieldBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#1a3a5c"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style x:Key="FieldPwBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#1a3a5c"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style x:Key="SaveBtn" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
-        <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+        <StackPanel>
 
-            <TextBlock Text="Postavke"
-                       FontSize="24" FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimaryBrush}"
-                       Margin="0,0,0,24"/>
+            <TextBlock Text="Postavke" FontSize="24" FontWeight="Bold"
+                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
 
-            <!-- API section -->
-            <StackPanel Margin="0,0,0,24">
-                <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,12">
-                    <TextBlock Text="API" FontSize="13" FontWeight="SemiBold"
-                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
-                </Border>
-                <TextBlock Text="API Adresa" FontSize="13"
-                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
-                <TextBox Text="{Binding ApiUrl, UpdateSourceTrigger=PropertyChanged}"
-                         Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
-                         BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
-                         Padding="10,8" FontSize="13"/>
-                <TextBlock Text="URL backend servera na koji se aplikacija spaja."
-                           FontSize="11" Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
-            </StackPanel>
 
-            <!-- Currency section -->
-            <StackPanel Margin="0,0,0,24">
-                <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,12">
-                    <TextBlock Text="Valuta" FontSize="13" FontWeight="SemiBold"
-                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
-                </Border>
-                <TextBlock Text="Odabrana valuta" FontSize="13"
-                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
-                <ComboBox ItemsSource="{Binding Currencies}"
-                          SelectedItem="{Binding SelectedCurrency}"
-                          Width="120" HorizontalAlignment="Left"/>
-            </StackPanel>
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}"
+                    BorderThickness="1" CornerRadius="10"
+                    Padding="4" Margin="0,0,0,20">
+                <WrapPanel>
+                    <Button Style="{StaticResource TabBtn}" Content="Profil"
+                            Tag="{Binding IsProfilTab}"
+                            Command="{Binding SelectTabCommand}" CommandParameter="Profil"/>
+                    <Button Style="{StaticResource TabBtn}" Content="Sigurnost"
+                            Tag="{Binding IsSigurnostTab}"
+                            Command="{Binding SelectTabCommand}" CommandParameter="Sigurnost"/>
+                    <Button Style="{StaticResource TabBtn}" Content="Obavijesti"
+                            Tag="{Binding IsObavijestTab}"
+                            Command="{Binding SelectTabCommand}" CommandParameter="Obavijest"/>
+                    <Button Style="{StaticResource TabBtn}" Content="Valuta"
+                            Tag="{Binding IsValutaTab}"
+                            Command="{Binding SelectTabCommand}" CommandParameter="Valuta"/>
+                </WrapPanel>
+            </Border>
 
-            <!-- Alerts section -->
-            <StackPanel Margin="0,0,0,24">
-                <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,12">
-                    <TextBlock Text="Obavijesti" FontSize="13" FontWeight="SemiBold"
-                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
-                </Border>
-                <CheckBox IsChecked="{Binding BudgetWarningAlerts}"
-                          Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
-                          Content="Upozorenje pri 80% iskorištenosti proračuna"
-                          Margin="0,0,0,10"/>
-                <CheckBox IsChecked="{Binding BudgetCriticalAlerts}"
-                          Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
-                          Content="Kritično upozorenje pri 100% iskorištenosti proračuna"/>
-            </StackPanel>
 
-            <!-- Startup section -->
-            <StackPanel Margin="0,0,0,32">
-                <Border BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,12">
-                    <TextBlock Text="Pokretanje" FontSize="13" FontWeight="SemiBold"
-                               Foreground="{StaticResource AccentBlueBrush}" Margin="0,0,0,8"/>
-                </Border>
-                <CheckBox IsChecked="{Binding StartMinimized}"
-                          Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
-                          Content="Pokreni aplikaciju minimizirano"/>
-            </StackPanel>
+            <Border Style="{StaticResource SectionCard}"
+                    Visibility="{Binding IsProfilTab, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Profil" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Uredite svoje osobne podatke." Style="{StaticResource SectionSubtitle}"/>
 
-            <!-- Save row -->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="Spremi postavke"
-                        Command="{Binding SaveCommand}"
-                        Background="{StaticResource AccentBlueBrush}"
-                        Foreground="White" BorderThickness="0"
-                        Padding="20,10" FontSize="14" Cursor="Hand"
-                        Margin="0,0,16,0"/>
-                <TextBlock Text="{Binding SavedMessage, Mode=OneWay}"
-                           FontSize="13" Foreground="{StaticResource AccentGreenBrush}"
-                           VerticalAlignment="Center"
-                           Visibility="{Binding SavedMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
-            </StackPanel>
+                    <WrapPanel Margin="0,0,0,12">
+                        <StackPanel MinWidth="220" Margin="0,0,16,8">
+                            <TextBlock Text="Ime" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Text="{Binding EditFirstName, UpdateSourceTrigger=PropertyChanged}"
+                                     MinWidth="200" Style="{StaticResource FieldBox}"/>
+                        </StackPanel>
+                        <StackPanel MinWidth="220" Margin="0,0,0,8">
+                            <TextBlock Text="Prezime" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Text="{Binding EditLastName, UpdateSourceTrigger=PropertyChanged}"
+                                     MinWidth="200" Style="{StaticResource FieldBox}"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding EditEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldBox}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Korisničko ime" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding EditUsername, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource FieldBox}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Spremi profil" Command="{Binding SaveProfileCommand}"
+                                Style="{StaticResource SaveBtn}" Margin="0,0,16,0"/>
+                        <TextBlock Text="{Binding ProfileSavedMessage, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentGreenBrush}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding ProfileSavedMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding ProfileError, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentRedBrush}"
+                                   VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Visibility="{Binding ProfileError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <Border Style="{StaticResource SectionCard}"
+                    Visibility="{Binding IsSigurnostTab, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Sigurnost" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Promijenite svoju lozinku." Style="{StaticResource SectionSubtitle}"/>
+
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Trenutna lozinka" Style="{StaticResource FieldLabel}"/>
+                        <PasswordBox x:Name="CurrentPasswordBox"
+                                     PasswordChanged="CurrentPasswordBox_PasswordChanged"
+                                     Style="{StaticResource FieldPwBox}"/>
+                    </StackPanel>
+
+                    <WrapPanel Margin="0,0,0,20">
+                        <StackPanel MinWidth="220" Margin="0,0,16,8">
+                            <TextBlock Text="Nova lozinka (min. 8 znakova)" Style="{StaticResource FieldLabel}"/>
+                            <PasswordBox x:Name="NewPasswordBox"
+                                         PasswordChanged="NewPasswordBox_PasswordChanged"
+                                         MinWidth="200" Style="{StaticResource FieldPwBox}"/>
+                        </StackPanel>
+                        <StackPanel MinWidth="220" Margin="0,0,0,8">
+                            <TextBlock Text="Potvrda nove lozinke" Style="{StaticResource FieldLabel}"/>
+                            <PasswordBox x:Name="ConfirmPasswordBox"
+                                         PasswordChanged="ConfirmPasswordBox_PasswordChanged"
+                                         MinWidth="200" Style="{StaticResource FieldPwBox}"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Promijeni lozinku" Command="{Binding ChangePasswordCommand}"
+                                Style="{StaticResource SaveBtn}" Margin="0,0,16,0"/>
+                        <TextBlock Text="{Binding PasswordSavedMessage, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentGreenBrush}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding PasswordSavedMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding PasswordError, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentRedBrush}"
+                                   VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <Border Style="{StaticResource SectionCard}"
+                    Visibility="{Binding IsObavijestTab, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Obavijesti" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Upravljajte upozorenjima o proračunu." Style="{StaticResource SectionSubtitle}"/>
+
+                    <CheckBox IsChecked="{Binding BudgetWarningAlerts}"
+                              Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
+                              Content="Upozorenje pri 80% iskorištenosti proračuna"
+                              Margin="0,0,0,12"/>
+                    <CheckBox IsChecked="{Binding BudgetCriticalAlerts}"
+                              Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
+                              Content="Kritično upozorenje pri 100% iskorištenosti proračuna"
+                              Margin="0,0,0,12"/>
+                    <CheckBox IsChecked="{Binding StartMinimized}"
+                              Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
+                              Content="Pokreni aplikaciju minimizirano"
+                              Margin="0,0,0,20"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Spremi postavke" Command="{Binding SaveCommand}"
+                                Style="{StaticResource SaveBtn}" Margin="0,0,16,0"/>
+                        <TextBlock Text="{Binding SavedMessage, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentGreenBrush}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding SavedMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <Border Style="{StaticResource SectionCard}"
+                    Visibility="{Binding IsValutaTab, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock Text="Valuta" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Prikaz iznosa u odabranoj valuti."
+                               Style="{StaticResource SectionSubtitle}"/>
+
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Odabrana valuta" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding Currencies}"
+                                  SelectedItem="{Binding SelectedCurrency}"
+                                  Width="140" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Spremi" Command="{Binding SaveCommand}"
+                                Style="{StaticResource SaveBtn}" Margin="0,0,16,0"/>
+                        <TextBlock Text="{Binding SavedMessage, Mode=OneWay}"
+                                   FontSize="13" Foreground="{StaticResource AccentGreenBrush}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding SavedMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>
