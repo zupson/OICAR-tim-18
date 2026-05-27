@@ -1,4 +1,4 @@
-<UserControl x:Class="Spendly.Desktop.Views.DashboardView"
+﻿<UserControl x:Class="Spendly.Desktop.Views.DashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BgDeepBrush}">
@@ -11,7 +11,7 @@
                        Foreground="{StaticResource TextPrimaryBrush}"
                        Margin="0,0,0,24"/>
 
-            <!-- Summary cards -->
+
             <UniformGrid Columns="4" Margin="0,0,0,24">
 
                 <Border Background="{StaticResource BgCardBrush}"
@@ -92,7 +92,7 @@
 
             </UniformGrid>
 
-            <!-- Category spending chart -->
+
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                     CornerRadius="12" Padding="20" Margin="0,0,0,24">
@@ -157,7 +157,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Recent transactions -->
+
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                     CornerRadius="12" Padding="20">

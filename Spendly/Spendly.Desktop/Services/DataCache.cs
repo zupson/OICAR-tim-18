@@ -103,7 +103,6 @@ public partial class DataCache : ObservableObject
             ? await api.GetAsync<ApiRevenueType[]>($"/api/RevenueType/GetAllRevenueTypesByGroup?groupId={api.PersonalGroupId}") ?? []
             : Array.Empty<ApiRevenueType>();
 
-        // Type options for add-transaction form — deduplicate by name to handle DB duplicates
         TypeOptions.Clear();
         foreach (var ct in costTypes.Where(c => c.Name?.StartsWith("__deleted_") != true).DistinctBy(c => c.Name))
             TypeOptions.Add(new ApiTypeOption(ct.Name ?? "Ostalo", ct.Id, false, ct.GroupId));
@@ -118,7 +117,6 @@ public partial class DataCache : ObservableObject
         foreach (var rt in revenueTypes.Where(rt => rt.Name is not null && rt.Name.StartsWith("__deleted_") != true).DistinctBy(rt => rt.Name))
             RevenueTypeNames.Add(rt.Name!);
 
-        // Load transactions (budgets are empty here so RecalculateBudgetSpent is a no-op)
         Budgets.Clear();
         Transactions.Clear();
         foreach (var c in costs)
@@ -148,7 +146,6 @@ public partial class DataCache : ObservableObject
                 IsApiRevenue = true,
             });
 
-        // Load budgets with pre-calculated spent — only the logged-in user's personal group
         foreach (var b in budgets.Where(b => b.UserGroupId == api.PersonalUserGroupId))
         {
             var spent = costs
@@ -168,7 +165,6 @@ public partial class DataCache : ObservableObject
             });
         }
 
-        // Load family members
         FamilyMembers.Clear();
         var avatarColors = new[] { "#3B82F6", "#22C55E", "#F59E0B", "#8B5CF6", "#EF4444", "#06B6D4" };
         int colorIdx = 0;

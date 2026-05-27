@@ -110,10 +110,6 @@ public partial class BudgetViewModel : ObservableObject
     {
         try
         {
-            // Move the budget to a dummy slot before soft-deleting so the real
-            // (UserGroupId, Month, Year) slot is freed in the unique constraint.
-            // Real budgets require year >= 2026, so years 2000-2025 are safe dummies.
-            // Each budget ID maps to a unique (month, year) pair in that range.
             int dummyMonth = ((budget.Id - 1) % 12) + 1;
             int dummyYear  = 2000 + ((budget.Id - 1) / 12);
             await _api.PutAsync($"/api/Budget/UpdateBudget/{budget.Id}",

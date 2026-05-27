@@ -13,7 +13,6 @@ public partial class ReportsViewModel : ObservableObject
     private readonly DataCache _data;
     private readonly ApiService      _api;
 
-    // ── Filter ────────────────────────────────────────────────────────────────
     [ObservableProperty] private DateTime _from = new(DateTime.Now.Year, DateTime.Now.Month, 1);
     [ObservableProperty] private DateTime _to   = DateTime.Now;
     [ObservableProperty] private string _selectedType = "Sve";
@@ -21,7 +20,6 @@ public partial class ReportsViewModel : ObservableObject
     public List<string> TypeOptions { get; } = ["Sve", "Rashodi", "Prihodi"];
     public ObservableCollection<Transaction> Filtered { get; } = [];
 
-    // ── Add / Edit form ───────────────────────────────────────────────────────
     [ObservableProperty] private bool    _isAddFormOpen;
     [ObservableProperty] private string  _newDescription = string.Empty;
     [ObservableProperty] private string  _newCategory    = string.Empty;

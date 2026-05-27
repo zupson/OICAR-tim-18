@@ -1,4 +1,4 @@
-<UserControl x:Class="Spendly.Desktop.Views.ReportsView"
+﻿<UserControl x:Class="Spendly.Desktop.Views.ReportsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:Spendly.Desktop.Converters"
@@ -7,7 +7,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
         <StackPanel>
 
-            <!-- Header row -->
+
             <Grid Margin="0,0,0,16">
                 <TextBlock Text="Izvještaji" FontSize="24" FontWeight="Bold"
                            Foreground="{StaticResource TextPrimaryBrush}"
@@ -30,7 +30,7 @@
                 </Button>
             </Grid>
 
-            <!-- Add form -->
+
             <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
                     KeyDown="Form_KeyDown"
                     Background="{StaticResource BgCardBrush}"
@@ -40,7 +40,7 @@
                     <TextBlock Text="{Binding FormTitle}" FontSize="15" FontWeight="SemiBold"
                                Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
 
-                    <!-- Row 1: Description, Category, Amount -->
+
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -84,7 +84,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Row 2: Type, Scope, Date -->
+
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="140"/>
@@ -138,7 +138,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Filter bar -->
+
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                     CornerRadius="12" Padding="14,8" Margin="0,0,0,16">
@@ -172,14 +172,14 @@
                 </WrapPanel>
             </Border>
 
-            <!-- Count label -->
+
             <TextBlock Margin="4,0,0,8" FontSize="12" Foreground="{StaticResource TextMutedBrush}">
                 <Run Text="Prikazano "/>
                 <Run Text="{Binding FilteredCount, Mode=OneWay}"/>
                 <Run Text=" transakcija"/>
             </TextBlock>
 
-            <!-- Column headers -->
+
             <Grid Margin="4,0,4,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
@@ -196,7 +196,7 @@
                 <TextBlock Grid.Column="4" Text="Iznos"      FontSize="12" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Right"/>
             </Grid>
 
-            <!-- Empty state -->
+
             <Border Visibility="{Binding HasNoTransactions, Converter={StaticResource BoolToVisibility}}"
                     Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
@@ -206,7 +206,7 @@
                            HorizontalAlignment="Center"/>
             </Border>
 
-            <!-- Transaction rows -->
+
             <ItemsControl ItemsSource="{Binding Filtered}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -276,7 +276,7 @@
                                     </TextBlock.Text>
                                 </TextBlock>
 
-                                <!-- Edit + Delete buttons (normal state) -->
+
                                 <StackPanel Grid.Column="5"
                                             Visibility="{Binding IsNotConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
                                             Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -293,7 +293,7 @@
                                             BorderThickness="0" FontSize="14" Cursor="Hand"
                                             ToolTip="Obriši"/>
                                 </StackPanel>
-                                <!-- Confirm delete -->
+
                                 <StackPanel Grid.Column="5"
                                             Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
                                             Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -315,7 +315,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- Summary row -->
+
             <Border Background="{StaticResource BgCardBrush}"
                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
                     CornerRadius="12" Padding="12,10" Margin="0,4,0,0"

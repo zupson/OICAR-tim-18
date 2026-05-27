@@ -9,7 +9,7 @@ public class NotificationItem
 {
     public string Title   { get; init; } = string.Empty;
     public string Detail  { get; init; } = string.Empty;
-    public string Level   { get; init; } = "info";   // "info", "warning", "critical"
+    public string Level   { get; init; } = "info";
     public bool   IsCritical => Level == "critical";
     public bool   IsWarning  => Level == "warning";
     public bool   IsInfo     => Level == "info";

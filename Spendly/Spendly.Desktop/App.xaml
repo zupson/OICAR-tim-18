@@ -17,7 +17,6 @@
         <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
         <conv:IntToGridLengthConverter x:Key="IntToGridLength"/>
 
-        <!-- Color palette -->
         <SolidColorBrush x:Key="BgDeepBrush"    Color="#0D1B2A"/>
         <SolidColorBrush x:Key="BgCardBrush"     Color="#0F2744"/>
         <SolidColorBrush x:Key="BgSidebarBrush"  Color="#060e1a"/>
@@ -32,7 +31,6 @@
         <SolidColorBrush x:Key="TextSecondaryBrush" Color="#94a3b8"/>
         <SolidColorBrush x:Key="TextMutedBrush"    Color="#64748B"/>
 
-        <!-- ComboBox dark theme -->
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#1a3a5c"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -53,7 +51,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"/>
-                            <!-- Full-width toggle for non-editable click area -->
+
                             <ToggleButton x:Name="ToggleButton" Grid.ColumnSpan="2"
                                           Background="Transparent" BorderThickness="0"
                                           Focusable="False" ClickMode="Press"
@@ -64,17 +62,17 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-                            <!-- Drop arrow -->
+
                             <Path Grid.Column="1" IsHitTestVisible="False"
                                   Fill="{StaticResource TextMutedBrush}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
                                   Data="M0,0 L4,4 L8,0 Z"/>
-                            <!-- Non-editable display -->
+
                             <ContentPresenter Grid.Column="0" x:Name="ContentSite"
                                               Margin="{TemplateBinding Padding}"
                                               VerticalAlignment="Center" IsHitTestVisible="False"
                                               Content="{TemplateBinding SelectionBoxItem}"/>
-                            <!-- Editable text box -->
+
                             <TextBox Grid.Column="0" x:Name="PART_EditableTextBox"
                                      Background="Transparent"
                                      Foreground="{TemplateBinding Foreground}"
@@ -84,7 +82,7 @@
                                      VerticalAlignment="Center" MinWidth="0"
                                      IsReadOnly="{TemplateBinding IsReadOnly}"
                                      Visibility="Hidden"/>
-                            <!-- Dropdown popup -->
+
                             <Popup x:Name="PART_Popup" Grid.ColumnSpan="2"
                                    IsOpen="{TemplateBinding IsDropDownOpen}"
                                    AllowsTransparency="True" Focusable="False"
@@ -137,7 +135,6 @@
             </Setter>
         </Style>
 
-        <!-- DatePicker dark theme -->
         <Style TargetType="DatePicker">
             <Setter Property="Background" Value="#1a3a5c"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -173,7 +170,6 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
 
-        <!-- TextBox focus glow -->
         <Style TargetType="TextBox">
             <Setter Property="SelectionBrush" Value="{StaticResource AccentBlueBrush}"/>
             <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}"/>
@@ -184,7 +180,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Slim scrollbar -->
         <Style TargetType="ScrollBar">
             <Setter Property="Width" Value="6"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -233,7 +228,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- ViewModel → View wiring -->
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
             <views:DashboardView/>
         </DataTemplate>

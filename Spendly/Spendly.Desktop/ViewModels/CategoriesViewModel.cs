@@ -207,9 +207,6 @@ public partial class CategoriesViewModel : ObservableObject
         DeleteError = string.Empty;
         _pendingDeleteTypeId = -1;
 
-        // Rename to a tombstone name first. This frees the original name for re-creation
-        // and ensures the category won't appear in the UI even if the hard-delete fails
-        // (FK from Cost/Revenue rows — including soft-deleted ones — blocks the DELETE).
         var tombstone = $"__deleted_{item.TypeId}";
         try
         {
@@ -224,8 +221,6 @@ public partial class CategoriesViewModel : ObservableObject
             return;
         }
 
-        // Attempt the actual delete. It may fail if transactions reference this category,
-        // but the tombstone rename already freed the name slot.
         try
         {
             if (item.IsRevenue)
@@ -235,13 +230,9 @@ public partial class CategoriesViewModel : ObservableObject
         }
         catch (HttpRequestException hre) when (hre.StatusCode == System.Net.HttpStatusCode.InternalServerError)
         {
-            // FK constraint blocked the hard-delete. That's OK — the record is now named
-            // __deleted_X and will be filtered out on the next load. Continue to remove
-            // it from the local cache below.
         }
         catch (HttpRequestException hre)
         {
-            // Unexpected error — undo the rename so the category is still usable
             try
             {
                 if (item.IsRevenue)
@@ -259,7 +250,6 @@ public partial class CategoriesViewModel : ObservableObject
             return;
         }
 
-        // Remove from local type options and refresh the view
         _data.TypeOptions.RemoveAll(t => t.TypeId == item.TypeId);
         Rebuild();
     }
