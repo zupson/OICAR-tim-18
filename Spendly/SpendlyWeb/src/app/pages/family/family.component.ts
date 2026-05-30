@@ -165,7 +165,7 @@ export class FamilyComponent implements OnInit {
   ngOnInit(): void {
     const gid = this.state.personalGroupId();
     if (!gid) return;
-    this.http.get<Member[]>(`/api/UserGroup/GetMembersByGroup/${gid}`).subscribe({
+    this.http.get<Member[]>(`/api/UserGroup/GetMemebersByGroup/${gid}`).subscribe({
       next: members => { if (members?.length) this.members.set(members); },
       error: () => this.members.set([]),
     });

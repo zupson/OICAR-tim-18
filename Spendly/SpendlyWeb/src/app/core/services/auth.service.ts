@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { forkJoin, tap } from 'rxjs';
+import { forkJoin, of, switchMap, tap } from 'rxjs';
 import { StateService } from './state.service';
 import { NotificationService } from './notification.service';
 import { Budget, Cost, CostType, Revenue, RevenueType, User, UserGroup } from '../../models';
@@ -49,27 +49,36 @@ export class AuthService {
   }
 
   loadUserData() {
-    return forkJoin({
-      groups:       this.http.get<UserGroup[]>('/api/UserGroup/GetAllUserGroups'),
-      costs:        this.http.get<Cost[]>('/api/Cost/GetAllCosts'),
-      revenues:     this.http.get<Revenue[]>('/api/Revenue/GetAllRevenues'),
-      costTypes:    this.http.get<CostType[]>('/api/CostType/GetAllCostTypes'),
-      revenueTypes: this.http.get<RevenueType[]>('/api/RevenueType/GetAllRevenueTypes'),
-      budgets:      this.http.get<Budget[]>('/api/Budget/GetAllBudgets'),
-    }).pipe(
-      tap(({ groups, costs, revenues, costTypes, revenueTypes, budgets }) => {
+    return this.http.get<UserGroup[]>('/api/UserGroup/GetAllUserGroups').pipe(
+      tap(groups => {
         this.state.userGroups.set(groups ?? []);
+        if (groups?.length) {
+          this.state.personalGroupId.set(groups[0].groupId);
+          this.state.personalUserGroupId.set(groups[0].id);
+        }
+      }),
+      switchMap(groups => {
+        const groupId = groups?.[0]?.groupId;
+        return forkJoin({
+          costs:        this.http.get<Cost[]>('/api/Cost/GetAllCosts'),
+          revenues:     this.http.get<Revenue[]>('/api/Revenue/GetAllRevenues'),
+          budgets:      this.http.get<Budget[]>('/api/Budget/GetAllBudgets'),
+          costTypes:    groupId
+            ? this.http.get<CostType[]>(`/api/CostType/GetAllCostTypesByGroup?groupId=${groupId}`)
+            : of<CostType[]>([]),
+          revenueTypes: groupId
+            ? this.http.get<RevenueType[]>(`/api/RevenueType/GetAllRevenueTypesByGroup?groupId=${groupId}`)
+            : of<RevenueType[]>([]),
+        });
+      }),
+      tap(({ costs, revenues, costTypes, revenueTypes, budgets }) => {
         this.state.costs.set(costs ?? []);
         this.state.revenues.set(revenues ?? []);
         this.state.costTypes.set(costTypes ?? []);
         this.state.revenueTypes.set(revenueTypes ?? []);
         this.state.budgets.set(budgets ?? []);
-        if (groups?.length) {
-          this.state.personalGroupId.set(groups[0].groupId);
-          this.state.personalUserGroupId.set(groups[0].id);
-        }
         this.notif.checkBudgetAlerts();
-      })
+      }),
     );
   }
 

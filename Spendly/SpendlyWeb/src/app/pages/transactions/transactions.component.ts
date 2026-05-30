@@ -251,8 +251,8 @@ export class TransactionsComponent {
     this.saving.set(true); this.modalErr.set('');
     const isExp = this.modalType() === 'exp';
     const body = isExp
-      ? { amount, notes: this.mNotes, transactionDate: this.mDate, costTypeId: +this.mCatId }
-      : { amount, notes: this.mNotes, transactionDate: this.mDate, revenueTypeId: +this.mCatId };
+      ? { amount, notes: this.mNotes, transactionDate: this.mDate, costTypeId: +this.mCatId, currency: 0 }
+      : { amount, notes: this.mNotes, transactionDate: this.mDate, revenueTypeId: +this.mCatId, currency: 0 };
 
     const editId = this.editId();
     const req = editId

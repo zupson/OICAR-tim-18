@@ -12,7 +12,11 @@ export interface Cost {
   notes: string;
   transactionDate: string;
   costTypeId: number;
-  userGroupId: number;
+  costTypeName?: string;
+  groupId?: number;
+  groupName?: string;
+  userId?: number;
+  currency?: number;
 }
 
 export interface Revenue {
@@ -21,19 +25,23 @@ export interface Revenue {
   notes: string;
   transactionDate: string;
   revenueTypeId: number;
-  userGroupId: number;
+  revenueTypeName?: string;
+  groupId?: number;
+  groupName?: string;
+  userId?: number;
+  currency?: number;
 }
 
 export interface CostType {
   id: number;
   name: string;
-  userGroupId: number;
+  groupId: number;
 }
 
 export interface RevenueType {
   id: number;
   name: string;
-  userGroupId: number;
+  groupId: number;
 }
 
 export interface Budget {

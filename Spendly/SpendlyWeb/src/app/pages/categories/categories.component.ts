@@ -142,22 +142,22 @@ export class CategoriesComponent {
   save() {
     const name = this.mName.trim();
     if (!name) { this.modalErr.set('Unesite naziv kategorije.'); return; }
-    const ugId = this.state.personalUserGroupId();
-    if (!ugId) { this.modalErr.set('Greška: nema grupe.'); return; }
+    const groupId = this.state.personalGroupId();
+    if (!groupId) { this.modalErr.set('Greška: nema grupe.'); return; }
 
     this.saving.set(true); this.modalErr.set('');
     const isExp  = this.modalType() === 'exp';
     const editId = this.editId();
     const req = editId
-      ? (isExp ? this.api.put(`/CostType/UpdateCostType/${editId}`, { name, userGroupId: ugId })
-               : this.api.put(`/RevenueType/UpdateRevenueType/${editId}`, { name, userGroupId: ugId }))
-      : (isExp ? this.api.post('/CostType/CreateCostType', { name, userGroupId: ugId })
-               : this.api.post('/RevenueType/CreateRevenueType', { name, userGroupId: ugId }));
+      ? (isExp ? this.api.put(`/CostType/EditCostType/${editId}`, { name })
+               : this.api.put(`/RevenueType/EditRevenueType/${editId}`, { name }))
+      : (isExp ? this.api.post('/CostType/CreateNewCostType', { name, groupId })
+               : this.api.post('/RevenueType/CreateNewRevenueType', { name, groupId }));
 
     req.subscribe({
       next: () => {
-        if (isExp) this.api.get<CostType[]>('/CostType/GetAllCostTypes').subscribe(r => { if (r) this.state.costTypes.set(r); });
-        else       this.api.get<RevenueType[]>('/RevenueType/GetAllRevenueTypes').subscribe(r => { if (r) this.state.revenueTypes.set(r); });
+        if (isExp) this.api.get<CostType[]>(`/CostType/GetAllCostTypesByGroup?groupId=${groupId}`).subscribe(r => { if (r) this.state.costTypes.set(r); });
+        else       this.api.get<RevenueType[]>(`/RevenueType/GetAllRevenueTypesByGroup?groupId=${groupId}`).subscribe(r => { if (r) this.state.revenueTypes.set(r); });
         this.modalOpen.set(false); this.saving.set(false);
       },
       error: (e: Error) => { this.modalErr.set('Greška: ' + e.message); this.saving.set(false); },

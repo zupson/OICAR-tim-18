@@ -52,11 +52,11 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
-Spendly/.vs/ProjectEvaluation/spendly.metadata.v9.bin
-/Spendly/.vs
-/Spendly/.vs
-Spendly/.vs/ProjectEvaluation/spendly.metadata.v9.bin
-Spendly/.vs/ProjectEvaluation/spendly.projects.v9.bin
-/Spendly/.vs/ProjectEvaluation
-/Spendly/.vs
-Spendly/.vs/ProjectEvaluation/spendly.metadata.v9.bin
+
+# Visual Studio working dirs
+**/.vs/
+
+# Angular / npm
+**/node_modules/
+**/dist/
+**/.angular/
