@@ -48,7 +48,12 @@ CodeCoverage/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# NUnit
-*.VisualState.xml
-TestResult.xml
 nunit-*.xml
+
+# Visual Studio working dirs
+**/.vs/
+
+# Angular / npm
+**/node_modules/
+**/dist/
+**/.angular/
