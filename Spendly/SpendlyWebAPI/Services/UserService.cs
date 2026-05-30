@@ -88,7 +88,7 @@ namespace SpendlyWebAPI.Services
                 .OrderByDescending(ug => ug.Role)
                 .FirstOrDefaultAsync();
 
-            var role = userGroup != null ? (Role)userGroup.Role : Role.GeneralAdmin;
+            var role = userGroup?.Role == (int)Role.GeneralAdmin ? Role.GeneralAdmin : Role.User;
 
 
             var b64hash = PasswordHashProvider.GetHash(dto.Password, user.PasswordSalt);
@@ -152,7 +152,7 @@ namespace SpendlyWebAPI.Services
             string JWT = JwtProvider.CreateToken(
                 secureKey,
                 60,
-                (Role)userGroup.Role,
+                Role.User,
                 newUser.Id
             );
 
@@ -174,7 +174,7 @@ namespace SpendlyWebAPI.Services
             {
                 UserId = newUser.Id,
                 GroupId = group.Id,
-                Role = (int)Role.User,  // Role se pohranjuje kao int, no za JWT koristimo string
+                Role = (int)Role.Owner,
                 JoinedAt = DateTime.UtcNow
             };
             _context.UserGroups.Add(userGroup);
@@ -185,7 +185,8 @@ namespace SpendlyWebAPI.Services
         {
             var group = new Group
             {
-                Name = $"{newUser.Username}'s group"
+                Name = $"{newUser.Username}'s group",
+                IsPersonal = true
             };
 
             _context.Groups.Add(group);

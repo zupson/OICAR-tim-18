@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { forkJoin, of, switchMap, tap } from 'rxjs';
+import { forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { StateService } from './state.service';
 import { NotificationService } from './notification.service';
 import { Budget, Cost, CostType, Revenue, RevenueType, User, UserGroup } from '../../models';
@@ -17,13 +17,22 @@ export class AuthService {
 
   friendlyErr(e: Error): string {
     if (e.message?.toLowerCase().includes('failed to fetch') || e.message?.toLowerCase().includes('unknown error'))
-      return 'Ne mogu se spojiti na server. Provjerite je li backend pokrenut na http://localhost:5153.';
+      return 'Ne mogu se spojiti na server. Provjerite je li backend pokrenut.';
     try {
       const obj = JSON.parse(e.message);
       if (obj?.errors) return Object.values(obj.errors).flat().join(' ');
-      if (typeof obj === 'string') return obj;
+      if (typeof obj === 'string') return this.stripUrls(obj);
     } catch {}
-    return e.message || 'Nepoznata greška.';
+    return this.stripUrls(e.message) || 'Nepoznata greška.';
+  }
+
+  private stripUrls(msg: string): string {
+    if (!msg) return msg;
+    return msg
+      .replace(/https?:\/\/\S+/gi, '')
+      .replace(/\/api\/\S+/gi, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
   }
 
   login(username: string, password: string) {
@@ -50,15 +59,18 @@ export class AuthService {
 
   loadUserData() {
     return this.http.get<UserGroup[]>('/api/UserGroup/GetAllUserGroups').pipe(
+      // Sort by UserGroup.id ascending so groups[0] is reliably the auto-created
+      // personal group (created at registration, lowest id).
+      map(groups => (groups ?? []).slice().sort((a, b) => a.id - b.id)),
       tap(groups => {
-        this.state.userGroups.set(groups ?? []);
-        if (groups?.length) {
+        this.state.userGroups.set(groups);
+        if (groups.length) {
           this.state.personalGroupId.set(groups[0].groupId);
           this.state.personalUserGroupId.set(groups[0].id);
         }
       }),
       switchMap(groups => {
-        const groupId = groups?.[0]?.groupId;
+        const groupId = groups[0]?.groupId;
         return forkJoin({
           costs:        this.http.get<Cost[]>('/api/Cost/GetAllCosts'),
           revenues:     this.http.get<Revenue[]>('/api/Revenue/GetAllRevenues'),

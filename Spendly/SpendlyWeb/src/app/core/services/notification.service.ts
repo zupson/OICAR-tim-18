@@ -49,15 +49,21 @@ export class NotificationService {
     this.save();
   }
 
+  private activeGroupId(): number | null {
+    const personalGroupId = this.state.personalGroupId();
+    const family = this.state.userGroups().find(g => g.groupId !== personalGroupId);
+    return family?.groupId ?? personalGroupId;
+  }
+
   prune(): void {
     const now = new Date();
     const m = now.getMonth() + 1, y = now.getFullYear();
-    const ugId = this.state.personalUserGroupId();
-    if (!ugId) return;
+    const gid = this.activeGroupId();
+    if (!gid) return;
 
-    const id80  = `budget-80-${ugId}-${m}-${y}`;
-    const id100 = `budget-100-${ugId}-${m}-${y}`;
-    const budget = this.state.budgets().find(b => b.userGroupId === ugId && b.month === m && b.year === y);
+    const id80  = `budget-80-${gid}-${m}-${y}`;
+    const id100 = `budget-100-${gid}-${m}-${y}`;
+    const budget = this.state.budgets().find(b => b.groupId === gid && b.month === m && b.year === y);
 
     let list = this.notifications();
     const before = list.length;
@@ -85,10 +91,10 @@ export class NotificationService {
 
     const now = new Date();
     const m = now.getMonth() + 1, y = now.getFullYear();
-    const ugId = this.state.personalUserGroupId();
-    if (!ugId) return;
+    const gid = this.activeGroupId();
+    if (!gid) return;
 
-    const budget = this.state.budgets().find(b => b.userGroupId === ugId && b.month === m && b.year === y);
+    const budget = this.state.budgets().find(b => b.groupId === gid && b.month === m && b.year === y);
     if (!budget) return;
 
     const spent = this.state.costs()
@@ -103,7 +109,7 @@ export class NotificationService {
 
     if (pct >= 100) {
       this.add({
-        id: `budget-100-${ugId}-${m}-${y}`,
+        id: `budget-100-${gid}-${m}-${y}`,
         type: 'budget_100',
         title: 'Budžet prekoračen!',
         desc: `Potrošnja za ${MONTHS_CAP[m-1]} ${y}. premašila je postavljeni limit. Potrošeno ${fmt(spent)} od ${fmt(limit)}.`,
@@ -112,7 +118,7 @@ export class NotificationService {
       });
     } else if (pct >= 80) {
       this.add({
-        id: `budget-80-${ugId}-${m}-${y}`,
+        id: `budget-80-${gid}-${m}-${y}`,
         type: 'budget_80',
         title: 'Limit budžeta se približava!',
         desc: `Budžet za ${MONTHS_CAP[m-1]} ${y}. dostigao je ${Math.round(pct)}% — potrošeno ${fmt(spent)} od ${fmt(limit)}.`,

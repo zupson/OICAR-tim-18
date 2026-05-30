@@ -43,6 +43,8 @@ namespace SpendlyWebAPI.Services
                     Username = uG.User.Username,
                     GroupId = uG.GroupId,
                     GroupName = uG.Group.Name,
+                    IsPersonal = uG.Group.IsPersonal,
+                    Role = uG.Role,
                     JoinedAt = uG.JoinedAt,
                 }).ToListAsync();
         }
@@ -60,6 +62,8 @@ namespace SpendlyWebAPI.Services
                    Username = uG.User.Username,
                    GroupId = uG.GroupId,
                    GroupName = uG.Group.Name,
+                   IsPersonal = uG.Group.IsPersonal,
+                   Role = uG.Role,
                    JoinedAt = uG.JoinedAt,
                }).ToListAsync();
         }
@@ -77,6 +81,8 @@ namespace SpendlyWebAPI.Services
                     Username = uG.User.Username,
                     GroupId = uG.GroupId,
                     GroupName = uG.Group.Name,
+                    IsPersonal = uG.Group.IsPersonal,
+                    Role = uG.Role,
                     JoinedAt = uG.JoinedAt,
                 }).FirstOrDefaultAsync();
         }
@@ -105,8 +111,37 @@ namespace SpendlyWebAPI.Services
                 Username = userGroup.User.Username,
                 GroupId = userGroup.GroupId,
                 GroupName = userGroup.Group.Name,
+                IsPersonal = userGroup.Group.IsPersonal,
+                Role = userGroup.Role,
                 JoinedAt = userGroup.JoinedAt,
             };
+        }
+
+        public async Task<bool> RemoveMemberAsync(int userGroupId)
+        {
+            int requesterId = GetCurrentUserIdFromJwt();
+
+            var target = await _context.UserGroups
+                .Include(ug => ug.Group)
+                .FirstOrDefaultAsync(ug => ug.Id == userGroupId);
+
+            if (target == null) return false;
+
+            var requesterMembership = await _context.UserGroups
+                .FirstOrDefaultAsync(ug => ug.UserId == requesterId && ug.GroupId == target.GroupId);
+
+            if (requesterMembership == null)
+                throw new UnauthorizedAccessException("Niste član ove grupe.");
+
+            if (requesterMembership.Role != (int)Enums.Role.Owner)
+                throw new UnauthorizedAccessException("Samo vlasnik grupe može uklanjati članove.");
+
+            if (target.Role == (int)Enums.Role.Owner)
+                throw new InvalidOperationException("Vlasnika nije moguće ukloniti iz vlastite grupe.");
+
+            _context.UserGroups.Remove(target);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

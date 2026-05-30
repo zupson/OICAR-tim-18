@@ -51,6 +51,7 @@ export interface Budget {
   month: number;
   currency: number;
   userGroupId: number;
+  groupId?: number;
 }
 
 export interface UserGroup {
@@ -58,7 +59,13 @@ export interface UserGroup {
   groupId: number;
   groupName: string;
   userId: number;
+  isPersonal?: boolean;
+  role?: number;
 }
+
+export const ROLE_USER = 1;
+export const ROLE_GENERAL_ADMIN = 2;
+export const ROLE_OWNER = 3;
 
 export interface Currency {
   code: string;

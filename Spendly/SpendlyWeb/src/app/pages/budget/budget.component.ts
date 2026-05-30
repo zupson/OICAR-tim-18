@@ -2,8 +2,9 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StateService, MONTHS_CAP, COLORS } from '../../core/services/state.service';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { Budget } from '../../models';
+import { Budget, ROLE_OWNER } from '../../models';
 
 @Component({
   selector: 'app-budget',
@@ -25,22 +26,27 @@ import { Budget } from '../../models';
       <div style="text-align:center;padding:28px 16px">
         <div style="font-size:36px;margin-bottom:8px">💰</div>
         <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Nema budžeta za {{ MONTHS_CAP[month()-1] }} {{ year() }}.</div>
-        <div style="font-size:12px;color:#64748B;margin-bottom:18px">Postavite budžet za praćenje potrošnje</div>
-      </div>
-      <div class="card">
-        <div class="card-title">Postavi budžet — {{ MONTHS_CAP[month()-1] }} {{ year() }}.</div>
-        <div class="card-sub">Odredite limit potrošnje za ovaj mjesec</div>
-        <div style="display:flex;gap:12px;align-items:flex-end;margin-top:12px;flex-wrap:wrap">
-          <div style="flex:1;min-width:150px">
-            <label class="modal-label">Iznos budžeta</label>
-            <input class="modal-fi" type="number" min="1" step="0.01" placeholder="npr. 3000.00" [(ngModel)]="newAmount" />
-          </div>
-          <button class="btn-sm" [disabled]="saving()" (click)="createBudget()">{{ saving() ? '...' : 'Spremi budžet' }}</button>
+        <div style="font-size:12px;color:#64748B;margin-bottom:18px">
+          @if (amIOwner()) { Postavite budžet za praćenje potrošnje }
+          @else { Samo vlasnik grupe može postaviti budžet. }
         </div>
-        @if (createMsg()) {
-          <div [style.color]="createErr() ? '#EF4444' : '#22C55E'" style="margin-top:8px;font-size:12px">{{ createMsg() }}</div>
-        }
       </div>
+      @if (amIOwner()) {
+        <div class="card">
+          <div class="card-title">Postavi budžet — {{ MONTHS_CAP[month()-1] }} {{ year() }}.</div>
+          <div class="card-sub">Odredite limit potrošnje za ovaj mjesec</div>
+          <div style="display:flex;gap:12px;align-items:flex-end;margin-top:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:150px">
+              <label class="modal-label">Iznos budžeta</label>
+              <input class="modal-fi" type="number" min="1" step="0.01" placeholder="npr. 3000.00" [(ngModel)]="newAmount" />
+            </div>
+            <button class="btn-sm" [disabled]="saving()" (click)="createBudget()">{{ saving() ? '...' : 'Spremi budžet' }}</button>
+          </div>
+          @if (createMsg()) {
+            <div [style.color]="createErr() ? '#EF4444' : '#22C55E'" style="margin-top:8px;font-size:12px">{{ createMsg() }}</div>
+          }
+        </div>
+      }
     } @else {
       <!-- Budget hero card -->
       <div class="card">
@@ -85,10 +91,14 @@ import { Budget } from '../../models';
             </div>
           </div>
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
-          <button class="btn-ghost" (click)="showEdit.set(!showEdit())">✏️ Uredi</button>
-          <button class="btn-ghost" (click)="deleteBudget()">🗑 Obriši</button>
-        </div>
+        @if (amIOwner()) {
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+            <button class="btn-ghost" (click)="showEdit.set(!showEdit())">✏️ Uredi</button>
+            <button class="btn-ghost" (click)="deleteBudget()">🗑 Obriši</button>
+          </div>
+        } @else {
+          <div style="margin-top:6px;font-size:11px;color:#64748B;text-align:right">Samo vlasnik može mijenjati budžet.</div>
+        }
         @if (showEdit()) {
           <div class="card" style="margin-top:10px">
             <div class="card-title" style="margin-bottom:10px">Uredi budžet — {{ MONTHS_CAP[month()-1] }} {{ year() }}.</div>
@@ -149,6 +159,7 @@ import { Budget } from '../../models';
 export class BudgetComponent {
   readonly state = inject(StateService);
   private api    = inject(ApiService);
+  private auth   = inject(AuthService);
   private notif  = inject(NotificationService);
   readonly MONTHS_CAP = MONTHS_CAP;
 
@@ -158,9 +169,17 @@ export class BudgetComponent {
   readonly year     = computed(() => this.budYear()  ?? new Date().getFullYear());
   readonly groupName = computed(() => this.state.userGroups()[0]?.groupName ?? 'Vaša grupa');
 
-  readonly budget = computed(() =>
-    this.state.budgets().find(b => b.userGroupId === this.state.personalUserGroupId() && b.month === this.month() && b.year === this.year())
-  );
+  readonly familyGroup = computed(() => {
+    const personalGroupId = this.state.personalGroupId();
+    return this.state.userGroups().find(g => g.groupId !== personalGroupId) ?? null;
+  });
+  readonly activeUserGroup = computed(() => this.familyGroup() ?? this.state.userGroups().find(g => g.groupId === this.state.personalGroupId()) ?? null);
+  readonly amIOwner = computed(() => this.activeUserGroup()?.role === ROLE_OWNER);
+
+  readonly budget = computed(() => {
+    const gid = this.activeUserGroup()?.groupId ?? this.state.personalGroupId();
+    return this.state.budgets().find(b => b.groupId === gid && b.month === this.month() && b.year === this.year());
+  });
 
   readonly mCosts = computed(() => {
     const m = this.month(), y = this.year();
@@ -225,12 +244,12 @@ export class BudgetComponent {
   createBudget() {
     const amount = parseFloat(this.newAmount);
     if (!amount || amount <= 0) { this.createMsg.set('Unesite ispravan iznos.'); this.createErr.set(true); return; }
-    const ugId = this.state.personalUserGroupId();
+    const ugId = this.activeUserGroup()?.id ?? this.state.personalUserGroupId();
     if (!ugId) { this.createMsg.set('Greška: nema korisničke grupe.'); this.createErr.set(true); return; }
     this.saving.set(true);
     this.api.post<Budget>(`/Budget/CreateBudget/${ugId}`, { amount, year: this.year(), month: this.month(), currency: 0 }).subscribe({
       next: b => { if (b) this.state.budgets.update(list => [...list, b]); this.saving.set(false); this.newAmount = ''; this.notif.checkBudgetAlerts(); },
-      error: (e: Error) => { this.createMsg.set('Greška: ' + e.message); this.createErr.set(true); this.saving.set(false); },
+      error: (e: Error) => { this.createMsg.set('Greška: ' + this.auth.friendlyErr(e)); this.createErr.set(true); this.saving.set(false); },
     });
   }
 
@@ -245,7 +264,7 @@ export class BudgetComponent {
         this.showEdit.set(false); this.saving.set(false);
         this.notif.prune(); this.notif.checkBudgetAlerts();
       },
-      error: (e: Error) => { this.editMsg.set('Greška: ' + e.message); this.editErr.set(true); this.saving.set(false); },
+      error: (e: Error) => { this.editMsg.set('Greška: ' + this.auth.friendlyErr(e)); this.editErr.set(true); this.saving.set(false); },
     });
   }
 
@@ -254,7 +273,7 @@ export class BudgetComponent {
     const id = this.budget()!.id;
     this.api.delete(`/Budget/DeleteBudget/${id}`).subscribe({
       next: () => { this.state.budgets.update(list => list.filter(b => b.id !== id)); this.notif.prune(); },
-      error: (e: Error) => alert('Greška: ' + e.message),
+      error: (e: Error) => alert('Greška: ' + this.auth.friendlyErr(e)),
     });
   }
 }

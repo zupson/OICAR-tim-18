@@ -30,6 +30,7 @@ namespace SpendlyWebAPI.Dtos
         public int Year { get; set; }
         public int Month { get; set; }
         public int UserGroupId { get; set; }
+        public int GroupId { get; set; }
         public Currency Currency { get; set; }
     }
 }

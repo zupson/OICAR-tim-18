@@ -42,7 +42,7 @@ import { NotifPrefs } from '../../models';
             <input class="modal-fi" readonly style="opacity:.6" [value]="state.user()?.email || ''" />
             @if (profileMsg()) { <div [style.color]="profileErr() ? '#EF4444' : '#22C55E'" style="font-size:12px;margin-bottom:10px">{{ profileMsg() }}</div> }
             <button class="btn-sm" [disabled]="saving()" (click)="saveProfile()">{{ saving() ? 'Sprema...' : 'Spremi promjene' }}</button>
-            <div style="font-size:11px;color:#64748B;margin-top:10px">API needed: PUT /api/User/EditMyProfile</div>
+            <div style="font-size:11px;color:#64748B;margin-top:10px">Uređivanje profila još nije dostupno.</div>
           </div>
         }
 
@@ -155,7 +155,7 @@ export class SettingsComponent {
       },
       error: (e: Error) => {
         const isNotFound = e.message.includes('Not Found') || e.message.includes('404') || e.message.includes('not found');
-        this.profileMsg.set(isNotFound ? 'API needed: PUT /api/User/EditMyProfile' : 'Greška: ' + this.auth.friendlyErr(e));
+        this.profileMsg.set(isNotFound ? 'Uređivanje profila još nije dostupno.' : 'Greška: ' + this.auth.friendlyErr(e));
         this.profileErr.set(true); this.saving.set(false);
       },
     });

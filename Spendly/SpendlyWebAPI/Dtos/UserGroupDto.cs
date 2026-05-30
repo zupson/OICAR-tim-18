@@ -7,6 +7,8 @@
         public string? Username { get; set; }
         public int GroupId { get; set; }
         public string? GroupName { get; set; }
+        public bool IsPersonal { get; set; }
+        public int Role { get; set; }
         public DateTime JoinedAt { get; set; }
     }
 }

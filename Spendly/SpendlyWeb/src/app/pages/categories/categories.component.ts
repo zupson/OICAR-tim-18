@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StateService, COLORS } from '../../core/services/state.service';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { CostType, RevenueType } from '../../models';
 
 @Component({
@@ -89,6 +90,7 @@ import { CostType, RevenueType } from '../../models';
 export class CategoriesComponent {
   readonly state = inject(StateService);
   private api    = inject(ApiService);
+  private auth   = inject(AuthService);
 
   readonly modalOpen = signal(false);
   readonly modalType = signal<'exp' | 'inc'>('exp');
@@ -160,7 +162,7 @@ export class CategoriesComponent {
         else       this.api.get<RevenueType[]>(`/RevenueType/GetAllRevenueTypesByGroup?groupId=${groupId}`).subscribe(r => { if (r) this.state.revenueTypes.set(r); });
         this.modalOpen.set(false); this.saving.set(false);
       },
-      error: (e: Error) => { this.modalErr.set('Greška: ' + e.message); this.saving.set(false); },
+      error: (e: Error) => { this.modalErr.set('Greška: ' + this.auth.friendlyErr(e)); this.saving.set(false); },
     });
   }
 
@@ -174,7 +176,7 @@ export class CategoriesComponent {
         if (type === 'exp') this.state.costTypes.update(list => list.filter(c => c.id !== id));
         else                this.state.revenueTypes.update(list => list.filter(r => r.id !== id));
       },
-      error: (e: Error) => alert('Greška: ' + e.message),
+      error: (e: Error) => alert('Greška: ' + this.auth.friendlyErr(e)),
     });
   }
 }

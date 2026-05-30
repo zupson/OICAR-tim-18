@@ -81,5 +81,29 @@ namespace SpendlyWebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> RemoveMember(int id)
+        {
+            try
+            {
+                var removed = await _userGroupService.RemoveMemberAsync(id);
+                if (!removed) return NotFound();
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

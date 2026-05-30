@@ -32,6 +32,10 @@ namespace SpendlyWebAPI.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
@@ -56,6 +60,10 @@ namespace SpendlyWebAPI.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
             }
             catch (Exception ex)
             {
@@ -118,6 +126,10 @@ namespace SpendlyWebAPI.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
             }
             catch (InvalidOperationException ex)
             {

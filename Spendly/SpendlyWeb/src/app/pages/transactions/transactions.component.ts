@@ -2,6 +2,7 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StateService, MONTHS_CAP } from '../../core/services/state.service';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { Cost, Revenue } from '../../models';
 
@@ -149,6 +150,7 @@ type TxnFilter = 'all' | 'inc' | 'exp';
 export class TransactionsComponent {
   readonly state = inject(StateService);
   private api    = inject(ApiService);
+  private auth   = inject(AuthService);
   private notif  = inject(NotificationService);
 
   readonly filter      = signal<TxnFilter>('all');
@@ -266,7 +268,7 @@ export class TransactionsComponent {
         this.modalOpen.set(false); this.saving.set(false);
         this.notif.prune(); this.notif.checkBudgetAlerts();
       },
-      error: (e: Error) => { this.modalErr.set('Greška: ' + e.message); this.saving.set(false); },
+      error: (e: Error) => { this.modalErr.set('Greška: ' + this.auth.friendlyErr(e)); this.saving.set(false); },
     });
   }
 
@@ -282,7 +284,7 @@ export class TransactionsComponent {
         else              this.state.costs.update(list => list.filter(c => c.id !== txn.id));
         this.notif.prune(); this.notif.checkBudgetAlerts();
       },
-      error: (e: Error) => alert('Greška: ' + e.message),
+      error: (e: Error) => alert('Greška: ' + this.auth.friendlyErr(e)),
     });
   }
 }

@@ -159,6 +159,10 @@ namespace SpendlyWebAPI.Services
                             .AnyAsync(ug => ug.UserId == userId && ug.GroupId == invitation.GroupId);
 
             if (alreadyMember) throw new InvalidOperationException("User already in group.");
+
+            var membershipCount = await _context.UserGroups.CountAsync(ug => ug.UserId == userId);
+            if (membershipCount >= 2)
+                throw new InvalidOperationException("You are already a member of a family group. Leave it before joining another.");
         }
     }
 }
