@@ -1,0 +1,259 @@
+﻿<UserControl x:Class="Spendly.Desktop.Views.BudgetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:Spendly.Desktop.Converters"
+             Background="{StaticResource BgDeepBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel>
+
+
+            <Grid Margin="0,0,0,16">
+                <TextBlock Text="Proračun" FontSize="24" FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Command="{Binding ToggleAddFormCommand}"
+                        Background="{StaticResource AccentBlueBrush}"
+                        Foreground="White" BorderThickness="0"
+                        Padding="16,8" FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="+ Dodaj proračun"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAddFormOpen}" Value="True">
+                                    <Setter Property="Content" Value="✕ Odustani"/>
+                                    <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+
+            <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
+                    KeyDown="Form_KeyDown"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Novi proračun" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Godina" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox x:Name="BudgetYearField"
+                                     Text="{Binding NewYear, UpdateSourceTrigger=PropertyChanged}"
+                                     conv:NumericInput.Only="True"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Mjesec" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding MonthNames}"
+                                      SelectedIndex="{Binding NewMonthIndex}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Limit (€)" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding NewLimit, UpdateSourceTrigger=PropertyChanged}"
+                                     conv:NumericInput.Only="True"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Dodaj" Command="{Binding AddBudgetCommand}"
+                                Background="{StaticResource AccentGreenBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
+                        <TextBlock Text="{Binding AddError, Mode=OneWay}"
+                                   Foreground="{StaticResource AccentRedBrush}" FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding AddError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <ItemsControl ItemsSource="{Binding Budgets}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                CornerRadius="12" Padding="20" Margin="0,0,0,12">
+                            <StackPanel>
+
+
+                                <StackPanel Visibility="{Binding IsNotEditing, Converter={StaticResource BoolToVisibility}}">
+
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name, Mode=OneWay}"
+                                                   FontSize="15" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <TextBlock FontSize="13" FontWeight="SemiBold" Margin="0,0,12,0"
+                                                       Foreground="{Binding AlertLevel, Converter={StaticResource AlertLevelToBrushConverter}}">
+                                                <Run Text="{Binding ProgressPercent, StringFormat={}{0:N0}, Mode=OneWay}"/>
+                                                <Run Text="%"/>
+                                            </TextBlock>
+                                            <Button Content="Uredi"
+                                                    Command="{Binding DataContext.StartEditCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" Foreground="{StaticResource AccentBlueBrush}"
+                                                    BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                                                    Padding="10,4" FontSize="12" Cursor="Hand" Margin="0,0,8,0"/>
+
+                                            <Button Content="Obriši"
+                                                    Visibility="{Binding IsNotConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
+                                                    Command="{Binding DataContext.RequestDeleteBudgetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" Foreground="{StaticResource AccentRedBrush}"
+                                                    BorderBrush="{StaticResource AccentRedBrush}" BorderThickness="1"
+                                                    Padding="10,4" FontSize="12" Cursor="Hand"/>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock Text="Obrisati?" VerticalAlignment="Center"
+                                                           FontSize="12" Foreground="{StaticResource AccentRedBrush}" Margin="0,0,8,0"/>
+                                                <Button Content="Da"
+                                                        Command="{Binding DataContext.ConfirmDeleteBudgetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="{StaticResource AccentRedBrush}" Foreground="White"
+                                                        BorderThickness="0" Padding="10,4" FontSize="12" Cursor="Hand" Margin="0,0,4,0"/>
+                                                <Button Content="Ne"
+                                                        Command="{Binding DataContext.CancelDeleteBudgetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                                        BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                                        Padding="10,4" FontSize="12" Cursor="Hand"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock FontSize="13" Foreground="{StaticResource TextSecondaryBrush}">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                    <Binding Path="Spent" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Text=" / "/>
+                                        <TextBlock FontSize="13" Foreground="{StaticResource TextSecondaryBrush}">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                    <Binding Path="Limit" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}"
+                                                 Maximum="100" Height="8"
+                                                 Foreground="{Binding AlertLevel, Converter={StaticResource AlertLevelToBrushConverter}}"
+                                                 BorderThickness="0" Margin="0,0,0,10">
+                                        <ProgressBar.Template>
+                                            <ControlTemplate TargetType="ProgressBar">
+                                                <Border x:Name="PART_Track" Background="#1e3a5f" CornerRadius="4" ClipToBounds="True">
+                                                    <Border x:Name="PART_Indicator"
+                                                            Background="{TemplateBinding Foreground}"
+                                                            HorizontalAlignment="Left" CornerRadius="4"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+                                    </ProgressBar>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="{Binding RemainingLabel, Mode=OneWay}"/>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Margin="4,0,0,0"
+                                                   Foreground="{Binding AlertLevel, Converter={StaticResource AlertLevelToBrushConverter}}">
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                    <Binding Path="RemainingAbsolute" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                    <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+
+
+                                <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock FontSize="15" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12">
+                                        <Run Text="Uredi limit — "/>
+                                        <Run Text="{Binding Name, Mode=OneWay}"/>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Text="Novi limit (€)" FontSize="12"
+                                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                            <TextBox Text="{Binding EditLimit, UpdateSourceTrigger=PropertyChanged}"
+                                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                                     Padding="10,8" FontSize="13" Width="160"/>
+                                        </StackPanel>
+                                        <Button Content="Spremi"
+                                                Command="{Binding DataContext.SaveEditCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Background="{StaticResource AccentGreenBrush}"
+                                                Foreground="White" BorderThickness="0"
+                                                Padding="16,8" FontSize="13" Cursor="Hand"
+                                                VerticalAlignment="Bottom" Margin="0,0,8,0"/>
+                                        <Button Content="Odustani"
+                                                Command="{Binding DataContext.CancelEditCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                                Padding="16,8" FontSize="13" Cursor="Hand"
+                                                VerticalAlignment="Bottom"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Visibility="{Binding HasNoBudgets, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="32">
+                <TextBlock Text="Nema proračuna. Kliknite '+ Dodaj proračun' za početak."
+                           FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

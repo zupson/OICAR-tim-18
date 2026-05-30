@@ -1,0 +1,136 @@
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using Spendly.Desktop.Models;
+
+namespace Spendly.Desktop.Converters;
+
+public class StringToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is string s && !string.IsNullOrEmpty(s) ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class AlertLevelToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is AlertLevel level ? level switch
+        {
+            AlertLevel.Critical => new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)),
+            AlertLevel.Warning  => new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)),
+            _                   => new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)),
+        } : Brushes.Gray;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class StringToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        try { return new SolidColorBrush((Color)ColorConverter.ConvertFromString(value?.ToString() ?? "#3B82F6")); }
+        catch { return Brushes.Gray; }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+// values: [decimal amount, decimal exchangeRate, string symbol]
+// optional 4th value: bool isIncome — adds +/- sign
+public class CurrencyConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values[0] is not decimal amount || values[1] is not decimal rate || values[2] is not string symbol)
+            return "";
+        var converted = amount * rate;
+        if (values.Length == 4 && values[3] is bool isIncome)
+            return isIncome ? $"+{converted:N2} {symbol}" : $"-{converted:N2} {symbol}";
+        return $"{converted:N2} {symbol}";
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class BoolToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is true
+            ? new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E))
+            : new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class InverseBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is bool b ? !b : false;
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is bool b ? !b : false;
+}
+
+public class InverseBoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is true ? Visibility.Collapsed : Visibility.Visible;
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class StringToInitialsConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is not string s || string.IsNullOrWhiteSpace(s)) return "?";
+        var parts = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[1][0]}".ToUpper()
+            : s[0].ToString().ToUpper();
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public class IntToGridLengthConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is int i && i > 0 ? new GridLength(i, GridUnitType.Star) : new GridLength(1, GridUnitType.Star);
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public static class NumericInput
+{
+    public static readonly DependencyProperty OnlyProperty =
+        DependencyProperty.RegisterAttached("Only", typeof(bool), typeof(NumericInput),
+            new PropertyMetadata(false, OnOnlyChanged));
+
+    public static bool GetOnly(DependencyObject obj) => (bool)obj.GetValue(OnlyProperty);
+    public static void SetOnly(DependencyObject obj, bool value) => obj.SetValue(OnlyProperty, value);
+
+    private static void OnOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not TextBox tb) return;
+        if ((bool)e.NewValue) tb.PreviewTextInput += Block;
+        else                  tb.PreviewTextInput -= Block;
+    }
+
+    private static void Block(object sender, TextCompositionEventArgs e)
+    {
+        var tb = (TextBox)sender;
+        if (e.Text.All(char.IsDigit)) return;
+        if ((e.Text == "." || e.Text == ",") && !tb.Text.Contains('.') && !tb.Text.Contains(',')) return;
+        e.Handled = true;
+    }
+}

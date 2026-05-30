@@ -1,0 +1,362 @@
+﻿<UserControl x:Class="Spendly.Desktop.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:Spendly.Desktop.Converters"
+             Background="{StaticResource BgDeepBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+        <StackPanel>
+
+
+            <Grid Margin="0,0,0,16">
+                <TextBlock Text="Izvještaji" FontSize="24" FontWeight="Bold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Command="{Binding ToggleAddFormCommand}"
+                        Padding="16,8" FontSize="13" Cursor="Hand" BorderThickness="0" Foreground="White">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="+ Dodaj transakciju"/>
+                            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAddFormOpen}" Value="True">
+                                    <Setter Property="Content" Value="✕ Odustani"/>
+                                    <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+
+            <Border Visibility="{Binding IsAddFormOpen, Converter={StaticResource BoolToVisibility}}"
+                    KeyDown="Form_KeyDown"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{Binding FormTitle}" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Opis" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox x:Name="DescriptionField"
+                                     Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Kategorija" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding AvailableCategories}"
+                                      SelectedItem="{Binding NewCategory}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Iznos ({0})">
+                                        <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBox Text="{Binding NewAmount, UpdateSourceTrigger=PropertyChanged}"
+                                     conv:NumericInput.Only="True"
+                                     Background="#1a3a5c" Foreground="{StaticResource TextPrimaryBrush}"
+                                     BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                     Padding="10,8" FontSize="13"/>
+                        </StackPanel>
+                    </Grid>
+
+
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Vrsta" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding NewTypeOptions}"
+                                      SelectedItem="{Binding NewSelectedType}"
+                                      IsEnabled="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Opseg" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding NewScopeOptions}"
+                                      SelectedItem="{Binding NewSelectedScope}"
+                                      IsEnabled="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Datum" FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <DatePicker SelectedDate="{Binding NewDate}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Dodaj"
+                                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVisibility}}"
+                                Command="{Binding AddTransactionCommand}"
+                                Background="{StaticResource AccentGreenBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
+                        <Button Content="Spremi izmjene"
+                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibility}}"
+                                Command="{Binding SaveEditTransactionCommand}"
+                                Background="{StaticResource AccentBlueBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="20,8" FontSize="13" Cursor="Hand" Margin="0,0,12,0"/>
+                        <TextBlock Text="{Binding AddError, Mode=OneWay}"
+                                   Foreground="{StaticResource AccentRedBrush}" FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding AddError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="14,8" Margin="0,0,0,16">
+                <WrapPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,16,6" VerticalAlignment="Center">
+                        <TextBlock Text="Od" FontSize="12" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                        <DatePicker SelectedDate="{Binding From}" Width="140"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,16,6" VerticalAlignment="Center">
+                        <TextBlock Text="Do" FontSize="12" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                        <DatePicker SelectedDate="{Binding To}" Width="140"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,16,6" VerticalAlignment="Center">
+                        <TextBlock Text="Vrsta" FontSize="12" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                        <ComboBox ItemsSource="{Binding TypeOptions}"
+                                  SelectedItem="{Binding SelectedType}" Width="120"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,6" VerticalAlignment="Center">
+                        <Button Content="Filtriraj" Command="{Binding ApplyFiltersCommand}"
+                                Background="{StaticResource AccentBlueBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Padding="16,8" Cursor="Hand" Margin="0,0,8,0"/>
+                        <Button Content="Resetiraj" Command="{Binding ResetFiltersCommand}"
+                                Background="Transparent" Foreground="{StaticResource AccentBlueBrush}"
+                                BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1"
+                                Padding="16,8" Cursor="Hand"/>
+                    </StackPanel>
+                </WrapPanel>
+            </Border>
+
+
+            <TextBlock Margin="4,0,0,8" FontSize="12" Foreground="{StaticResource TextMutedBrush}">
+                <Run Text="Prikazano "/>
+                <Run Text="{Binding FilteredCount, Mode=OneWay}"/>
+                <Run Text=" transakcija"/>
+            </TextBlock>
+
+
+            <Grid Margin="4,0,4,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Datum"      FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock Grid.Column="1" Text="Opis"       FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock Grid.Column="2" Text="Kategorija" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock Grid.Column="3" Text="Opseg"      FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock Grid.Column="4" Text="Iznos"      FontSize="12" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Right"/>
+            </Grid>
+
+
+            <Border Visibility="{Binding HasNoTransactions, Converter={StaticResource BoolToVisibility}}"
+                    Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="32" Margin="0,0,0,12">
+                <TextBlock Text="Nema transakcija za odabrane filtre."
+                           FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+
+            <ItemsControl ItemsSource="{Binding Filtered}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource BgCardBrush}"
+                                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                CornerRadius="10" Padding="12,10" Margin="0,0,0,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}, Mode=OneWay}"
+                                           FontSize="13" Foreground="{StaticResource TextSecondaryBrush}"
+                                           VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="1" Text="{Binding Description, Mode=OneWay}"
+                                           FontSize="13" Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                <Border Grid.Column="2" VerticalAlignment="Center"
+                                        CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{StaticResource ExpenseBadgeBgBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsIncome}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource IncomeBadgeBgBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding Category, Mode=OneWay}" FontSize="12">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsIncome}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource AccentGreenBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <TextBlock Grid.Column="3" Text="{Binding ScopeLabel, Mode=OneWay}"
+                                           FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                           VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="4"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{Binding IsIncome, Converter={StaticResource BoolToBrushConverter}}"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                            <Binding Path="Amount" Mode="OneWay"/>
+                                            <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            <Binding Path="IsIncome" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+
+
+                                <StackPanel Grid.Column="5"
+                                            Visibility="{Binding IsNotConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
+                                            Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button Content="✎"
+                                            Command="{Binding DataContext.RequestEditTransactionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent" Foreground="{StaticResource AccentBlueBrush}"
+                                            BorderThickness="0" FontSize="14" Cursor="Hand" Margin="0,0,4,0"
+                                            ToolTip="Uredi"/>
+                                    <Button Content="✕"
+                                            Command="{Binding DataContext.RequestDeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                            BorderThickness="0" FontSize="14" Cursor="Hand"
+                                            ToolTip="Obriši"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="5"
+                                            Visibility="{Binding IsConfirmingDelete, Converter={StaticResource BoolToVisibility}}"
+                                            Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button Content="Da"
+                                            Command="{Binding DataContext.ConfirmDeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Background="{StaticResource AccentRedBrush}" Foreground="White"
+                                            BorderThickness="0" Padding="6,2" FontSize="11" Cursor="Hand" Margin="0,0,3,0"/>
+                                    <Button Content="Ne"
+                                            Command="{Binding DataContext.CancelDeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent" Foreground="{StaticResource TextMutedBrush}"
+                                            BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                                            Padding="6,2" FontSize="11" Cursor="Hand"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="12,10" Margin="0,4,0,0"
+                    Visibility="{Binding HasTransactions, Converter={StaticResource BoolToVisibility}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Ukupno za filtar:"
+                               FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,16,0">
+                        <TextBlock Text="↑ " FontSize="13" Foreground="{StaticResource AccentGreenBrush}" VerticalAlignment="Center"/>
+                        <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenBrush}" VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="FilteredIncome" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Text="↓ " FontSize="13" Foreground="{StaticResource AccentRedBrush}" VerticalAlignment="Center"/>
+                        <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource AccentRedBrush}" VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                    <Binding Path="FilteredExpenses" Mode="OneWay"/>
+                                    <Binding Path="ExchangeRate" Mode="OneWay"/>
+                                    <Binding Path="CurrencySymbol" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
