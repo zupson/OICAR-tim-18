@@ -23,18 +23,19 @@ public partial class LoginWindow : Window
                 var data = App.Services.GetRequiredService<DataCache>();
                 await data.LoadFromApiAsync(api);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 loadFailed = true;
                 vm.DataLoadWarning = "Upozorenje: podaci nisu mogli biti učitani.";
-                System.Diagnostics.Debug.WriteLine($"Data load failed: {ex.Message}");
             }
             if (loadFailed) await Task.Delay(1500);
             vm.DataLoadWarning = string.Empty;
             vm.IsLoading = false;
 
             var mainWindow = App.Services.GetRequiredService<MainWindow>();
-            ((MainViewModel)mainWindow.DataContext).LoggedInUser = fullName;
+            var mainVm = (MainViewModel)mainWindow.DataContext;
+            mainVm.LoggedInUser = fullName;
+            App.Services.GetRequiredService<SettingsViewModel>().RefreshProfile();
 
             var settings = App.Services.GetRequiredService<SettingsService>().Load();
             mainWindow.Show();
