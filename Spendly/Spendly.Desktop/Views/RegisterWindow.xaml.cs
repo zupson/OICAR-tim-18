@@ -22,14 +22,15 @@ public partial class RegisterWindow : Window
                 var data = App.Services.GetRequiredService<DataCache>();
                 await data.LoadFromApiAsync(api);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                System.Diagnostics.Debug.WriteLine($"Data load failed: {ex.Message}");
             }
             vm.IsLoading = false;
 
             var mainWindow = App.Services.GetRequiredService<MainWindow>();
-            ((MainViewModel)mainWindow.DataContext).LoggedInUser = fullName;
+            var mainVm = (MainViewModel)mainWindow.DataContext;
+            mainVm.LoggedInUser = fullName;
+            App.Services.GetRequiredService<SettingsViewModel>().RefreshProfile();
 
             var settings = App.Services.GetRequiredService<SettingsService>().Load();
             mainWindow.Show();

@@ -253,14 +253,14 @@ public partial class ReportsViewModel : ObservableObject
                 ? $"/api/Revenue/DeleteRevenue/{t.Id}"
                 : $"/api/Cost/{t.Id}";
             await _api.DeleteAsync(path);
+            _data.Transactions.Remove(t);
+            ApplyFilters();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Delete failed: {ex.Message}");
+            t.IsConfirmingDelete = false;
+            AddError = "Greška pri brisanju transakcije. Pokušajte ponovo.";
         }
-
-        _data.Transactions.Remove(t);
-        ApplyFilters();
     }
 
     [RelayCommand]

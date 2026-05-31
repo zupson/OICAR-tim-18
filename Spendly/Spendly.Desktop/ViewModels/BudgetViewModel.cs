@@ -115,12 +115,13 @@ public partial class BudgetViewModel : ObservableObject
             await _api.PutAsync($"/api/Budget/UpdateBudget/{budget.Id}",
                 new { amount = budget.Limit, year = dummyYear, month = dummyMonth, currency = 0 });
             await _api.DeleteAsync($"/api/Budget/DeleteBudget/{budget.Id}");
+            _data.Budgets.Remove(budget);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Delete budget failed: {ex.Message}");
+            budget.IsConfirmingDelete = false;
+            AddError = "Greška pri brisanju proračuna. Pokušajte ponovo.";
         }
-        _data.Budgets.Remove(budget);
     }
 
     [RelayCommand]
@@ -147,9 +148,9 @@ public partial class BudgetViewModel : ObservableObject
                       month = budget.ApiMonth ?? DateTime.Now.Month, currency = 0 });
             budget.Limit = budget.EditLimit;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Edit budget failed: {ex.Message}");
+            AddError = "Greška pri uređivanju proračuna. Pokušajte ponovo.";
         }
         budget.IsEditing = false;
     }

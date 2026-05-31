@@ -79,11 +79,6 @@
                                TextDecorations="None">Registrirajte se</Hyperlink>
                 </TextBlock>
 
-                <TextBlock Margin="0,10,0,0" FontSize="11"
-                           Foreground="{StaticResource TextMutedBrush}"
-                           HorizontalAlignment="Center" TextAlignment="Center">
-                    <Run Text="testuser / Test1234"/>
-                </TextBlock>
 
             </StackPanel>
         </Border>

@@ -28,6 +28,14 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void SelectTab(string tab) => SelectedTab = tab;
 
+    public void RefreshProfile()
+    {
+        EditFirstName = _api.FirstName;
+        EditLastName  = _api.LastName;
+        EditEmail     = _api.Email;
+        EditUsername  = _api.Username;
+    }
+
     // ── App settings ──────────────────────────────────────────────────────────
     [ObservableProperty] private string _selectedCurrency = "EUR";
     [ObservableProperty] private bool _budgetWarningAlerts;

@@ -60,7 +60,7 @@ public partial class NotificationsViewModel : ObservableObject
             Items.Add(new NotificationItem
             {
                 Title  = "Nema postavljenih proračuna",
-                Detail = "Dodajte proračun u kartici Zajednički budžet kako biste pratili potrošnju.",
+                Detail = "Dodajte proračun u kartici Proračun kako biste pratili potrošnju.",
                 Level  = "info"
             });
 
