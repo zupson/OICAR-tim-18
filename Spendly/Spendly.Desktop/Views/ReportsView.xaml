@@ -179,6 +179,11 @@
                 <Run Text=" transakcija"/>
             </TextBlock>
 
+            <TextBlock Text="{Binding DeleteError, Mode=OneWay}"
+                       Visibility="{Binding DeleteError, Converter={StaticResource StringToVisibilityConverter}}"
+                       Foreground="{StaticResource AccentRedBrush}" FontSize="12"
+                       Margin="4,0,0,8"/>
+
 
             <Grid Margin="4,0,4,8">
                 <Grid.ColumnDefinitions>

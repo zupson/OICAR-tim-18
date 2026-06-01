@@ -203,6 +203,106 @@
                                             </TextBlock.Text>
                                         </TextBlock>
                                     </StackPanel>
+
+                                    <!-- Spending per category -->
+                                    <Border Visibility="{Binding HasNoCategorySpending, Converter={StaticResource InverseBoolToVisibility}}"
+                                            Background="{StaticResource AppBorderBrush}" Height="1" Margin="0,14,0,14"/>
+
+                                    <TextBlock Text="Rashodi po kategorijama" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"
+                                               Visibility="{Binding HasNoCategorySpending, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                                    <ItemsControl ItemsSource="{Binding CategorySpending}"
+                                                  Visibility="{Binding HasNoCategorySpending, Converter={StaticResource InverseBoolToVisibility}}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="120"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="90"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0" Text="{Binding Category}"
+                                                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                                    <ProgressBar Grid.Column="1" Value="{Binding BarPercent}" Maximum="100"
+                                                                 Height="8" Margin="10,0"
+                                                                 Foreground="{StaticResource AccentAmberBrush}"
+                                                                 BorderThickness="0" VerticalAlignment="Center">
+                                                        <ProgressBar.Template>
+                                                            <ControlTemplate TargetType="ProgressBar">
+                                                                <Border x:Name="PART_Track" Background="#1e3a5f" CornerRadius="4" ClipToBounds="True">
+                                                                    <Border x:Name="PART_Indicator"
+                                                                            Background="{TemplateBinding Foreground}"
+                                                                            HorizontalAlignment="Left" CornerRadius="4"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </ProgressBar.Template>
+                                                    </ProgressBar>
+
+                                                    <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold"
+                                                               Foreground="{StaticResource AccentAmberBrush}"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Recent transactions -->
+                                    <Border Visibility="{Binding HasNoRecentTransactions, Converter={StaticResource InverseBoolToVisibility}}"
+                                            Background="{StaticResource AppBorderBrush}" Height="1" Margin="0,14,0,14"/>
+
+                                    <TextBlock Text="Nedavne transakcije" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"
+                                               Visibility="{Binding HasNoRecentTransactions, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                                    <ItemsControl ItemsSource="{Binding RecentTransactions}"
+                                                  Visibility="{Binding HasNoRecentTransactions, Converter={StaticResource InverseBoolToVisibility}}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="90"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="90"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}, Mode=OneWay}"
+                                                               FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                                               VerticalAlignment="Center"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{Binding Description, Mode=OneWay}"
+                                                               FontSize="12" Foreground="{StaticResource TextPrimaryBrush}"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                               Margin="8,0"/>
+
+                                                    <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold"
+                                                               Foreground="{StaticResource AccentRedBrush}"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
                                 </StackPanel>
 
 
@@ -251,6 +351,127 @@
                 <TextBlock Text="Nema proračuna. Kliknite '+ Dodaj proračun' za početak."
                            FontSize="13" Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>
+            </Border>
+
+            <!-- Family section -->
+            <Border Background="{StaticResource BgCardBrush}"
+                    BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                    CornerRadius="12" Padding="20" Margin="0,8,0,0">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <Border Background="#1a2f4a" CornerRadius="6" Padding="8,4" Margin="0,0,10,0">
+                            <TextBlock Text="Obiteljski" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource AccentAmberBrush}"/>
+                        </Border>
+                        <TextBlock Text="Rashodi ovog mjeseca" FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Nema obiteljskih rashoda ovog mjeseca."
+                               Visibility="{Binding HasNoFamilyTransactions, Converter={StaticResource BoolToVisibility}}"
+                               FontSize="13" Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" Margin="0,0,0,8"/>
+
+                    <!-- Family category spending -->
+                    <TextBlock Text="Po kategorijama" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"
+                               Visibility="{Binding HasNoFamilyCategorySpending, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                    <ItemsControl ItemsSource="{Binding FamilyCategorySpending}"
+                                  Visibility="{Binding HasNoFamilyCategorySpending, Converter={StaticResource InverseBoolToVisibility}}"
+                                  Margin="0,0,0,16">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="90"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="{Binding Category}"
+                                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                    <ProgressBar Grid.Column="1" Value="{Binding BarPercent}" Maximum="100"
+                                                 Height="8" Margin="10,0"
+                                                 Foreground="{StaticResource AccentAmberBrush}"
+                                                 BorderThickness="0" VerticalAlignment="Center">
+                                        <ProgressBar.Template>
+                                            <ControlTemplate TargetType="ProgressBar">
+                                                <Border x:Name="PART_Track" Background="#1e3a5f" CornerRadius="4" ClipToBounds="True">
+                                                    <Border x:Name="PART_Indicator"
+                                                            Background="{TemplateBinding Foreground}"
+                                                            HorizontalAlignment="Left" CornerRadius="4"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+                                    </ProgressBar>
+
+                                    <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentAmberBrush}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Family recent transactions -->
+                    <Border Background="{StaticResource AppBorderBrush}" Height="1" Margin="0,0,0,14"
+                            Visibility="{Binding HasNoFamilyTransactions, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                    <TextBlock Text="Nedavne transakcije" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"
+                               Visibility="{Binding HasNoFamilyTransactions, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                    <ItemsControl ItemsSource="{Binding FamilyRecentTransactions}"
+                                  Visibility="{Binding HasNoFamilyTransactions, Converter={StaticResource InverseBoolToVisibility}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="90"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}, Mode=OneWay}"
+                                               FontSize="12" Foreground="{StaticResource TextMutedBrush}"
+                                               VerticalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="1" Text="{Binding Description, Mode=OneWay}"
+                                               FontSize="12" Foreground="{StaticResource TextPrimaryBrush}"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                               Margin="8,0"/>
+
+                                    <TextBlock Grid.Column="2" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentRedBrush}"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource CurrencyConverter}">
+                                                <Binding Path="Amount" Mode="OneWay"/>
+                                                <Binding Path="DataContext.ExchangeRate" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.CurrencySymbol" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
             </Border>
 
         </StackPanel>

@@ -43,7 +43,8 @@ public partial class DataCache : ObservableObject
             if (budget.ApiMonth.HasValue)
             {
                 budget.Spent = Transactions
-                    .Where(t => t.Type == TransactionType.Expense &&
+                    .Where(t => t.Type  == TransactionType.Expense &&
+                                t.Scope == TransactionScope.Personal &&
                                 t.Date.Month == budget.ApiMonth &&
                                 t.Date.Year  == budget.ApiYear)
                     .Sum(t => t.Amount);
@@ -51,7 +52,8 @@ public partial class DataCache : ObservableObject
             else
             {
                 budget.Spent = Transactions
-                    .Where(t => t.Type == TransactionType.Expense &&
+                    .Where(t => t.Type  == TransactionType.Expense &&
+                                t.Scope == TransactionScope.Personal &&
                                 string.Equals(t.Category, budget.Category, StringComparison.OrdinalIgnoreCase))
                     .Sum(t => t.Amount);
             }
@@ -94,7 +96,8 @@ public partial class DataCache : ObservableObject
         var costs    = await api.GetAsync<ApiCost[]>("/api/Cost/GetAllCosts")         ?? [];
         var revenues = await api.GetAsync<ApiRevenue[]>("/api/Revenue/GetAllRevenues") ?? [];
         var budgets  = await api.GetAsync<ApiBudget[]>("/api/Budget/GetAllBudgets")    ?? [];
-        var userGroups = await api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
+        var userGroups     = await api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
+        var personalGroupId = userGroups.FirstOrDefault(g => g.IsPersonal)?.GroupId ?? api.PersonalGroupId;
 
         var costTypes    = api.PersonalGroupId > 0
             ? await api.GetAsync<ApiCostType[]>($"/api/CostType/GetAllCostTypesByGroup?groupId={api.PersonalGroupId}") ?? []
@@ -129,7 +132,7 @@ public partial class DataCache : ObservableObject
                 Amount       = c.Amount,
                 Date         = c.TransactionDate,
                 Type         = TransactionType.Expense,
-                Scope        = c.GroupId == api.PersonalGroupId ? TransactionScope.Personal : TransactionScope.Family,
+                Scope        = c.GroupId == personalGroupId ? TransactionScope.Personal : TransactionScope.Family,
                 IsApiRevenue = false,
             });
         foreach (var r in revenues)
@@ -142,14 +145,14 @@ public partial class DataCache : ObservableObject
                 Amount       = r.Amount,
                 Date         = r.TransactionDate,
                 Type         = TransactionType.Income,
-                Scope        = r.GroupId == api.PersonalGroupId ? TransactionScope.Personal : TransactionScope.Family,
+                Scope        = r.GroupId == personalGroupId ? TransactionScope.Personal : TransactionScope.Family,
                 IsApiRevenue = true,
             });
 
         foreach (var b in budgets.Where(b => b.UserGroupId == api.PersonalUserGroupId))
         {
             var spent = costs
-                .Where(c => c.GroupId == api.PersonalGroupId &&
+                .Where(c => c.GroupId == personalGroupId &&
                             c.TransactionDate.Month == b.Month && c.TransactionDate.Year == b.Year)
                 .Sum(c => c.Amount);
             Budgets.Add(new Budget

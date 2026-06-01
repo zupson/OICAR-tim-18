@@ -6,7 +6,17 @@ namespace Spendly.Desktop.Services;
 
 public class ApiService
 {
-    private readonly HttpClient _http = new() { BaseAddress = new Uri("http://localhost:5153") };
+    private readonly HttpClient _http;
+
+    public ApiService()
+    {
+        _http = new HttpClient { BaseAddress = new Uri("http://localhost:5153") };
+    }
+
+    internal ApiService(HttpMessageHandler handler)
+    {
+        _http = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5153") };
+    }
 
     public string? Token            { get; set; }
     public int     UserId           { get; set; }

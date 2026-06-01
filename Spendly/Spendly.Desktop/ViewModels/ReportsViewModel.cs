@@ -31,7 +31,8 @@ public partial class ReportsViewModel : ObservableObject
 
     [ObservableProperty] private string   _newSelectedScope = "Osobno";
     [ObservableProperty] private DateTime _newDate = DateTime.Now;
-    [ObservableProperty] private string   _addError = string.Empty;
+    [ObservableProperty] private string   _addError    = string.Empty;
+    [ObservableProperty] private string   _deleteError = string.Empty;
 
     private Transaction? _editingTransaction;
     public bool IsEditing => _editingTransaction is not null;
@@ -241,6 +242,7 @@ public partial class ReportsViewModel : ObservableObject
     private void RequestDeleteTransaction(Transaction t)
     {
         foreach (var tx in _data.Transactions) tx.IsConfirmingDelete = false;
+        DeleteError = string.Empty;
         t.IsConfirmingDelete = true;
     }
 
@@ -259,12 +261,16 @@ public partial class ReportsViewModel : ObservableObject
         catch (Exception)
         {
             t.IsConfirmingDelete = false;
-            AddError = "Greška pri brisanju transakcije. Pokušajte ponovo.";
+            DeleteError = "Greška pri brisanju transakcije. Pokušajte ponovo.";
         }
     }
 
     [RelayCommand]
-    private void CancelDeleteTransaction(Transaction t) => t.IsConfirmingDelete = false;
+    private void CancelDeleteTransaction(Transaction t)
+    {
+        t.IsConfirmingDelete = false;
+        DeleteError = string.Empty;
+    }
 
     [RelayCommand]
     private void ResetFilters()
