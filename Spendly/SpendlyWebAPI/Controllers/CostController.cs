@@ -31,6 +31,25 @@ namespace SpendlyWebAPI.Controllers
         }
 
         [Authorize(Roles = "GeneralAdmin,User")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<ResponseCostDto>>> GetAllCostsByGroup([FromQuery] int groupId)
+        {
+            try
+            {
+                var costs = await _costService.GetAllByGroupAsync(groupId);
+                return Ok(costs);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "GeneralAdmin,User")]
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<ResponseCostDto>> GetCostById(int id)
         {

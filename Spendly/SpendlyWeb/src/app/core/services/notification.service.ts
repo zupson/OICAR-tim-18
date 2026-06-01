@@ -4,6 +4,7 @@ import { StateService } from './state.service';
 
 const STORE_KEY      = 'spendly_notifications';
 const PREFS_KEY      = 'spendly_notif_prefs';
+const OWNER_KEY      = 'spendly_notif_owner';
 const PREFS_DEFAULTS: NotifPrefs = { budget_alert: true, shared_costs: true, member_activity: false };
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +21,18 @@ export class NotificationService {
 
   private save(): void {
     localStorage.setItem(STORE_KEY, JSON.stringify(this.notifications()));
+  }
+
+  /**
+   * Ties stored notifications to a user. When a different account signs in,
+   * the previous account's notifications are cleared — notifications live in
+   * shared localStorage, so without this a new account inherits old ones.
+   */
+  syncUser(userId: number): void {
+    if (localStorage.getItem(OWNER_KEY) === String(userId)) return;
+    localStorage.setItem(OWNER_KEY, String(userId));
+    localStorage.removeItem(STORE_KEY);
+    this.notifications.set([]);
   }
 
   getPrefs(): NotifPrefs {

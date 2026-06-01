@@ -113,6 +113,43 @@ namespace SpendlyWebAPI.Services
             .ToListAsync();
         }
 
+        // Returns the combined costs of EVERY member of the given group.
+        // Used by the shared/family budget so one member's spending is visible to all.
+        public async Task<IEnumerable<ResponseCostDto>> GetAllByGroupAsync(int groupId)
+        {
+            var userId = GetCurrentUserIdFromJwt();
+
+            var isMember = await _context.UserGroups
+                .AnyAsync(ug => ug.GroupId == groupId && ug.UserId == userId);
+            if (!isMember)
+                throw new UnauthorizedAccessException("Niste član ove grupe.");
+
+            var memberIds = await _context.UserGroups
+                .Where(ug => ug.GroupId == groupId)
+                .Select(ug => ug.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            return await _context.Costs
+                .Where(c => memberIds.Contains(c.UserId) && !c.IsDeleted)
+                .Include(c => c.CostType)
+                .Include(c => c.Group)
+                .Select(c => new ResponseCostDto
+                {
+                    Id = c.Id,
+                    Amount = c.Amount,
+                    TransactionDate = c.TransactionDate,
+                    Notes = c.Notes,
+                    UserId = c.UserId,
+                    Currency = (Currency)c.Currency,
+                    CostTypeId = c.CostTypeId,
+                    CostTypeName = c.CostType.Name,
+                    GroupId = c.GroupId,
+                    GroupName = c.Group.Name
+                })
+                .ToListAsync();
+        }
+
         public async Task<ResponseCostDto?> GetByIdAsync(int id)
         {
             return await _context.Costs

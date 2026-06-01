@@ -15,15 +15,87 @@ export class AuthService {
   private notif  = inject(NotificationService);
   private router = inject(Router);
 
-  friendlyErr(e: Error): string {
-    if (e.message?.toLowerCase().includes('failed to fetch') || e.message?.toLowerCase().includes('unknown error'))
+  friendlyErr(e: any): string {
+    // No connection / server unreachable
+    if (e?.status === 0 || /failed to fetch|unknown error/i.test(String(e?.message ?? '')))
       return 'Ne mogu se spojiti na server. Provjerite je li backend pokrenut.';
-    try {
-      const obj = JSON.parse(e.message);
-      if (obj?.errors) return Object.values(obj.errors).flat().join(' ');
-      if (typeof obj === 'string') return this.stripUrls(obj);
-    } catch {}
-    return this.stripUrls(e.message) || 'Nepoznata greška.';
+
+    // Actual server payload: HttpErrorResponse exposes it on .error; when the
+    // body isn't JSON, Angular wraps the text as { text: '...' }.
+    const body = e?.error ?? this.tryParse(e?.message);
+
+    // ASP.NET model-validation errors -> { errors: { Field: [messages] } }
+    if (body && typeof body === 'object' && body.errors && typeof body.errors === 'object') {
+      const msg = this.translateValidation(body.errors as Record<string, string[]>);
+      if (msg) return msg;
+    }
+
+    // Plain string message from the server (clean controller message or "Wrong password")
+    const raw =
+      typeof body === 'string'           ? body :
+      typeof e?.error === 'string'       ? e.error :
+      typeof e?.error?.text === 'string' ? e.error.text :
+      typeof e?.message === 'string'     ? e.message : '';
+
+    const known = this.mapKnownMessage(raw);
+    if (known) return known;
+
+    // A clean, human-readable server message — show it as-is
+    if (raw && !this.isTechnical(raw)) return this.stripUrls(raw);
+
+    // Fall back on the HTTP status code
+    switch (e?.status) {
+      case 400: return 'Neispravan zahtjev. Provjerite unesene podatke.';
+      case 401:
+      case 403: return 'Pogrešno korisničko ime ili lozinka.';
+      case 404: return 'Traženi podatak nije pronađen.';
+      case 409: return 'Korisničko ime ili e-mail već postoji.';
+      case 500: return 'Greška na poslužitelju. Pokušajte ponovno kasnije.';
+    }
+    return 'Nepoznata greška. Pokušajte ponovno.';
+  }
+
+  private tryParse(s: unknown): any {
+    if (typeof s !== 'string') return null;
+    try { return JSON.parse(s); } catch { return null; }
+  }
+
+  private isTechnical(msg: string): boolean {
+    return /dbupdate|sqlexception|inner exception|an error occurred while saving|stack trace|system\.|http failure|xhr|cannot read|undefined/i.test(msg);
+  }
+
+  private mapKnownMessage(raw: string): string | null {
+    const m = (raw || '').toLowerCase();
+    if (!m) return null;
+    if (m.includes('wrong password') || m.includes('wrong username') || m.includes('invalid credentials') || m.includes('unauthorized'))
+      return 'Pogrešno korisničko ime ili lozinka.';
+    if (m.includes('uq_user_email')) return 'Ova e-mail adresa je već registrirana.';
+    if (m.includes('uq_user_username')) return 'Ovo korisničko ime je već zauzeto.';
+    if (m.includes('duplicate') || m.includes('unique') || m.includes('cannot insert duplicate'))
+      return 'Korisničko ime ili e-mail već postoji.';
+    return null;
+  }
+
+  private translateValidation(errors: Record<string, string[]>): string {
+    const labels: Record<string, string> = {
+      email: 'E-mail', password: 'Lozinka', username: 'Korisničko ime',
+      firstname: 'Ime', lastname: 'Prezime', currentpassword: 'Trenutna lozinka',
+    };
+    const out: string[] = [];
+    for (const [field, arr] of Object.entries(errors)) {
+      const key   = field.toLowerCase();
+      const label = labels[key] ?? field;
+      const text  = (Array.isArray(arr) ? arr.join(' ') : String(arr ?? '')).toLowerCase();
+      if (key === 'email' || text.includes('e-mail') || text.includes('email'))
+        out.push('Unesite ispravnu e-mail adresu (npr. ime@primjer.com).');
+      else if (text.includes('minimum length') || text.includes('at least') || text.includes('minlength'))
+        out.push(key === 'password' ? 'Lozinka mora imati najmanje 8 znakova.' : `${label} mora imati najmanje 3 znaka.`);
+      else if (text.includes('required') || text.includes('empty'))
+        out.push(`${label} je obavezno polje.`);
+      else
+        out.push(`${label}: neispravan unos.`);
+    }
+    return out.join(' ');
   }
 
   private stripUrls(msg: string): string {
@@ -58,6 +130,8 @@ export class AuthService {
   }
 
   loadUserData() {
+    const uid = this.state.user()?.id;
+    if (uid != null) this.notif.syncUser(uid);
     return this.http.get<UserGroup[]>('/api/UserGroup/GetAllUserGroups').pipe(
       // Sort by UserGroup.id ascending so groups[0] is reliably the auto-created
       // personal group (created at registration, lowest id).

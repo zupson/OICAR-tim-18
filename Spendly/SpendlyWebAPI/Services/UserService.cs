@@ -136,6 +136,12 @@ namespace SpendlyWebAPI.Services
 
         public async Task<(ResponseUserDto user, string token)> RegisterAsync(RegisterUserDto dto)
         {
+            if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+                throw new InvalidOperationException("Ovo korisničko ime je već zauzeto.");
+
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+                throw new InvalidOperationException("Ova e-mail adresa je već registrirana.");
+
             var newUser = CreateNewUserAccount(dto);
             await _context.SaveChangesAsync();
 

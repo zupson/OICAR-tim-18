@@ -1,10 +1,10 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StateService, MONTHS_CAP, COLORS } from '../../core/services/state.service';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { Budget, ROLE_OWNER } from '../../models';
+import { Budget, Cost, ROLE_OWNER } from '../../models';
 
 @Component({
   selector: 'app-budget',
@@ -142,8 +142,8 @@ import { Budget, ROLE_OWNER } from '../../models';
             <div class="txn-row">
               <div class="txn-icon" style="background:#3a0f0f;width:28px;height:28px;font-size:12px">💸</div>
               <div class="txn-info">
-                <div class="txn-name">{{ c.notes || catName(c.costTypeId) }}</div>
-                <div class="txn-cat">{{ catName(c.costTypeId) }}</div>
+                <div class="txn-name">{{ c.notes || catNameFor(c) }}</div>
+                <div class="txn-cat">{{ catNameFor(c) }}</div>
               </div>
               <div class="txn-amt" style="color:#EF4444">-{{ fmt(c.amount) }}</div>
             </div>
@@ -176,6 +176,20 @@ export class BudgetComponent {
   readonly activeUserGroup = computed(() => this.familyGroup() ?? this.state.userGroups().find(g => g.groupId === this.state.personalGroupId()) ?? null);
   readonly amIOwner = computed(() => this.activeUserGroup()?.role === ROLE_OWNER);
 
+  // Combined costs of ALL members of the active group, so the shared budget
+  // reflects every member's spending — not just the current user's.
+  private readonly groupCosts = signal<Cost[]>([]);
+  constructor() {
+    effect(() => {
+      const gid = this.activeUserGroup()?.groupId ?? this.state.personalGroupId();
+      if (!gid) { this.groupCosts.set([]); return; }
+      this.api.get<Cost[]>(`/Cost/GetAllCostsByGroup?groupId=${gid}`).subscribe({
+        next: c => this.groupCosts.set(c ?? []),
+        error: () => this.groupCosts.set([]),
+      });
+    });
+  }
+
   readonly budget = computed(() => {
     const gid = this.activeUserGroup()?.groupId ?? this.state.personalGroupId();
     return this.state.budgets().find(b => b.groupId === gid && b.month === this.month() && b.year === this.year());
@@ -183,7 +197,7 @@ export class BudgetComponent {
 
   readonly mCosts = computed(() => {
     const m = this.month(), y = this.year();
-    return this.state.costs().filter(c => { const d = new Date(c.transactionDate); return d.getMonth()+1===m && d.getFullYear()===y; });
+    return this.groupCosts().filter(c => { const d = new Date(c.transactionDate); return d.getMonth()+1===m && d.getFullYear()===y; });
   });
 
   readonly limit     = computed(() => Number(this.budget()?.amount ?? 0));
@@ -206,11 +220,11 @@ export class BudgetComponent {
   });
 
   readonly expByCat = computed(() => {
-    const byType: Record<number,number> = {};
-    this.mCosts().forEach(c => { byType[c.costTypeId] = (byType[c.costTypeId] ?? 0) + c.amount; });
+    const byName: Record<string,number> = {};
+    this.mCosts().forEach(c => { const n = this.catNameFor(c); byName[n] = (byName[n] ?? 0) + c.amount; });
     const total = this.spent() || 1;
-    return Object.entries(byType)
-      .map(([id, amt], i) => ({ name: this.state.costTypes().find(x => x.id === +id)?.name ?? 'Ostalo', amt, pct: Math.max(8, Math.round(amt/total*100)), color: COLORS[i%COLORS.length] }))
+    return Object.entries(byName)
+      .map(([name, amt], i) => ({ name, amt, pct: Math.max(8, Math.round(amt/total*100)), color: COLORS[i%COLORS.length] }))
       .sort((a,b) => b.amt - a.amt).slice(0,5);
   });
 
@@ -221,8 +235,8 @@ export class BudgetComponent {
       .slice(0, 5)
   );
 
-  catName(ctId: number): string {
-    return this.state.costTypes().find(x => x.id === ctId)?.name ?? '—';
+  catNameFor(c: Cost): string {
+    return c.costTypeName ?? this.state.costTypes().find(x => x.id === c.costTypeId)?.name ?? '—';
   }
 
   readonly showEdit  = signal(false);

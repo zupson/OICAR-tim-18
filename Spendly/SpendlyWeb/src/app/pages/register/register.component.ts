@@ -53,6 +53,9 @@ export class RegisterComponent {
     this.error.set('');
     const { firstName, lastName, email, username, password } = this.form;
     if (!firstName || !lastName || !email || !username || !password) { this.error.set('Sva polja su obavezna.'); return; }
+    if (firstName.trim().length < 3 || lastName.trim().length < 3) { this.error.set('Ime i prezime moraju imati najmanje 3 znaka.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { this.error.set('Unesite ispravnu e-mail adresu (npr. ime@primjer.com).'); return; }
+    if (username.trim().length < 3) { this.error.set('Korisničko ime mora imati najmanje 3 znaka.'); return; }
     if (password !== this.confirm) { this.error.set('Lozinke se ne podudaraju.'); return; }
     if (password.length < 8)       { this.error.set('Lozinka mora imati najmanje 8 znakova.'); return; }
     this.loading.set(true);
