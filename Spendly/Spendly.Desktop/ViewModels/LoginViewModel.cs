@@ -49,17 +49,19 @@ public partial class LoginViewModel : ObservableObject
             _api.Username  = response.User.Username;
 
             // Login response has empty Groups — fetch them separately
-            var allGroups = await _api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
-            var myGroups  = allGroups.Where(g => g.UserId == _api.UserId).OrderBy(g => g.Id).ToArray();
-            if (myGroups.Length > 0)
+            var allGroups    = await _api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
+            var personal     = allGroups.FirstOrDefault(g => g.IsPersonal);
+            var familyGroups = allGroups.Where(g => !g.IsPersonal).OrderBy(g => g.Id).ToArray();
+
+            if (personal != null)
             {
-                _api.PersonalGroupId     = myGroups[0].GroupId;
-                _api.PersonalUserGroupId = myGroups[0].Id;
+                _api.PersonalGroupId     = personal.GroupId;
+                _api.PersonalUserGroupId = personal.Id;
             }
-            if (myGroups.Length > 1)
+            if (familyGroups.Length > 0)
             {
-                _api.FamilyGroupId     = myGroups[1].GroupId;
-                _api.FamilyUserGroupId = myGroups[1].Id;
+                _api.FamilyGroupId     = familyGroups[0].GroupId;
+                _api.FamilyUserGroupId = familyGroups[0].Id;
             }
 
             ErrorMessage = string.Empty;
