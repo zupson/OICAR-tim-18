@@ -145,7 +145,9 @@ export class AuthService {
       }),
       switchMap(groups => {
         const groupId = groups[0]?.groupId;
-        const familyGroupId = groups.find(g => g.groupId !== groupId)?.groupId ?? null;
+        // Active group = the shared/family group if you're in one, otherwise your own
+        // group (which may itself be shared if others joined it — the owner's case).
+        const familyGroupId = groups.find(g => g.groupId !== groupId)?.groupId ?? groupId ?? null;
         return forkJoin({
           costs:        this.http.get<Cost[]>('/api/Cost/GetAllCosts'),
           revenues:     this.http.get<Revenue[]>('/api/Revenue/GetAllRevenues'),
