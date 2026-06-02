@@ -1,10 +1,13 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Notification, NotifPrefs } from '../../models';
+import { Notification, NotifPrefs, Cost } from '../../models';
 import { StateService } from './state.service';
+import { processSharedCosts, processMemberActivity, MemberLike } from './notification-logic';
 
 const STORE_KEY      = 'spendly_notifications';
 const PREFS_KEY      = 'spendly_notif_prefs';
 const OWNER_KEY      = 'spendly_notif_owner';
+const SEEN_COSTS_KEY   = 'spendly_notif_seen_costs';
+const SEEN_MEMBERS_KEY = 'spendly_notif_seen_members';
 const PREFS_DEFAULTS: NotifPrefs = { budget_alert: true, shared_costs: true, member_activity: false };
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +35,8 @@ export class NotificationService {
     if (localStorage.getItem(OWNER_KEY) === String(userId)) return;
     localStorage.setItem(OWNER_KEY, String(userId));
     localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(SEEN_COSTS_KEY);
+    localStorage.removeItem(SEEN_MEMBERS_KEY);
     this.notifications.set([]);
   }
 
@@ -139,6 +144,40 @@ export class NotificationService {
         read: false,
       });
     }
+  }
+
+  /** shared_costs: notify about new expenses recorded by OTHER family members. */
+  checkSharedCosts(costs: Cost[], members: MemberLike[], myUserId: number): void {
+    const { notifications, nextSeen } = processSharedCosts({
+      costs,
+      seenIds: this.loadSeen(SEEN_COSTS_KEY) as number[] | null,
+      enabled: this.getPrefs().shared_costs,
+      members,
+      myUserId,
+      timestamp: new Date().toISOString(),
+      fmt: (n) => this.state.fmt(n),
+    });
+    notifications.forEach(n => this.add(n));
+    localStorage.setItem(SEEN_COSTS_KEY, JSON.stringify(nextSeen));
+  }
+
+  /** member_activity: notify when members join or leave the family group. */
+  checkMemberActivity(members: MemberLike[], myUserId: number): void {
+    const { notifications, nextSeen } = processMemberActivity({
+      members,
+      seen: this.loadSeen(SEEN_MEMBERS_KEY) as MemberLike[] | null,
+      enabled: this.getPrefs().member_activity,
+      myUserId,
+      timestamp: new Date().toISOString(),
+    });
+    notifications.forEach(n => this.add(n));
+    localStorage.setItem(SEEN_MEMBERS_KEY, JSON.stringify(nextSeen));
+  }
+
+  private loadSeen(key: string): unknown[] | null {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return null;
+    try { const v = JSON.parse(raw); return Array.isArray(v) ? v : null; } catch { return null; }
   }
 
   formatTime(iso: string): string {

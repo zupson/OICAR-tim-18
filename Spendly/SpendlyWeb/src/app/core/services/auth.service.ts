@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { StateService } from './state.service';
 import { NotificationService } from './notification.service';
 import { Budget, Cost, CostType, Revenue, RevenueType, User, UserGroup } from '../../models';
@@ -145,6 +145,7 @@ export class AuthService {
       }),
       switchMap(groups => {
         const groupId = groups[0]?.groupId;
+        const familyGroupId = groups.find(g => g.groupId !== groupId)?.groupId ?? null;
         return forkJoin({
           costs:        this.http.get<Cost[]>('/api/Cost/GetAllCosts'),
           revenues:     this.http.get<Revenue[]>('/api/Revenue/GetAllRevenues'),
@@ -155,15 +156,27 @@ export class AuthService {
           revenueTypes: groupId
             ? this.http.get<RevenueType[]>(`/api/RevenueType/GetAllRevenueTypesByGroup?groupId=${groupId}`)
             : of<RevenueType[]>([]),
-        });
+          sharedCosts:  familyGroupId
+            ? this.http.get<Cost[]>(`/api/Cost/GetAllCostsByGroup?groupId=${familyGroupId}`).pipe(catchError(() => of<Cost[] | null>(null)))
+            : of<Cost[]>([]),
+          members:      familyGroupId
+            ? this.http.get<any[]>(`/api/UserGroup/GetMemebersByGroup/${familyGroupId}`).pipe(catchError(() => of<any[] | null>(null)))
+            : of<any[]>([]),
+        }).pipe(map(data => ({ ...data, familyGroupId })));
       }),
-      tap(({ costs, revenues, costTypes, revenueTypes, budgets }) => {
+      tap(({ costs, revenues, costTypes, revenueTypes, budgets, sharedCosts, members, familyGroupId }) => {
         this.state.costs.set(costs ?? []);
         this.state.revenues.set(revenues ?? []);
         this.state.costTypes.set(costTypes ?? []);
         this.state.revenueTypes.set(revenueTypes ?? []);
         this.state.budgets.set(budgets ?? []);
         this.notif.checkBudgetAlerts();
+        if (familyGroupId) {
+          const myId = this.state.user()?.id ?? -1;
+          // Skip (don't seed) when a fetch failed, so we don't flood later.
+          if (sharedCosts) this.notif.checkSharedCosts(sharedCosts, members ?? [], myId);
+          if (members)     this.notif.checkMemberActivity(members, myId);
+        }
       }),
     );
   }

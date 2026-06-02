@@ -2,8 +2,11 @@ import { Component, inject, computed } from '@angular/core';
 import { NotificationService } from '../../core/services/notification.service';
 
 const NOTIF_ICONS: Record<string, { bg: string; icon: string }> = {
-  budget_80:  { bg: '#3a1200', icon: '⚠️' },
-  budget_100: { bg: '#3a0000', icon: '🚨' },
+  budget_80:    { bg: '#3a1200', icon: '⚠️' },
+  budget_100:   { bg: '#3a0000', icon: '🚨' },
+  shared_cost:  { bg: '#3a0f0f', icon: '💸' },
+  member_join:  { bg: '#0a3320', icon: '👋' },
+  member_leave: { bg: '#2a2a2a', icon: '🚪' },
 };
 
 @Component({
