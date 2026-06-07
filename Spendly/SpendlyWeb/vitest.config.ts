@@ -7,5 +7,6 @@ export default defineConfig({
     // enough — no jsdom/browser needed, which keeps the tests fast.
     environment: 'node',
     include: ['src/**/*.spec.ts'],
+    reporters: ['verbose'],
   },
 });
