@@ -1,0 +1,40 @@
+name: Web App Unit Tests
+
+# Runs the SpendlyWeb (Angular) Vitest unit tests in the cloud on every push /
+# PR that touches the web app. Can also be started by hand from the Actions tab.
+on:
+  push:
+    paths:
+      - 'Spendly/SpendlyWeb/**'
+      - '.github/workflows/web-tests.yml'
+  pull_request:
+    paths:
+      - 'Spendly/SpendlyWeb/**'
+      - '.github/workflows/web-tests.yml'
+  workflow_dispatch:
+
+# If you push again while a run is still going, cancel the older one.
+concurrency:
+  group: web-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Spendly/SpendlyWeb
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm test
