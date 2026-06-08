@@ -170,16 +170,35 @@ public partial class DataCache : ObservableObject
 
         FamilyMembers.Clear();
         var avatarColors = new[] { "#3B82F6", "#22C55E", "#F59E0B", "#8B5CF6", "#EF4444", "#06B6D4" };
+
+        // Dohvati stvarne članove obiteljske (dijeljene) grupe — istu grupu u koju se
+        // šalju pozivnice. GetAllUserGroups vraća samo članstva trenutnog korisnika,
+        // pa za popis svih članova koristimo GetMemebersByGroup.
+        var familyGroupId = api.FamilyGroupId != 0 ? api.FamilyGroupId : api.PersonalGroupId;
+        var members = familyGroupId > 0
+            ? await api.GetAsync<ApiUserGroup[]>($"/api/UserGroup/GetMemebersByGroup/{familyGroupId}") ?? []
+            : Array.Empty<ApiUserGroup>();
+
+        bool currentUserIsOwner = members.Any(m => m.UserId == api.UserId && m.Role == FamilyMember.RoleVlasnik);
+
         int colorIdx = 0;
-        foreach (var ug in userGroups)
+        foreach (var ug in members.OrderByDescending(m => m.Role).ThenBy(m => m.Username))
+        {
+            bool isCurrent = ug.UserId == api.UserId;
+            int roleId = ug.Role == 0 ? FamilyMember.RoleClan : ug.Role;
             FamilyMembers.Add(new FamilyMember
             {
-                Name        = ug.Username ?? "Korisnik",
-                Email       = string.Empty,
-                Role        = ug.UserId == api.UserId ? "Vlasnik" : "Član",
-                AvatarColor = avatarColors[colorIdx++ % avatarColors.Length],
-                TotalIncome = revenues.Where(r => r.UserId == ug.UserId).Sum(r => r.Amount),
-                TotalSpent  = costs.Where(c => c.UserId == ug.UserId).Sum(c => c.Amount),
+                Name          = ug.Username ?? "Korisnik",
+                Email         = string.Empty,
+                UserId        = ug.UserId,
+                UserGroupId   = ug.Id,
+                RoleId        = roleId,
+                IsCurrentUser = isCurrent,
+                CanManage     = currentUserIsOwner && !isCurrent && roleId != FamilyMember.RoleVlasnik,
+                AvatarColor   = avatarColors[colorIdx++ % avatarColors.Length],
+                TotalIncome   = revenues.Where(r => r.UserId == ug.UserId).Sum(r => r.Amount),
+                TotalSpent    = costs.Where(c => c.UserId == ug.UserId).Sum(c => c.Amount),
             });
+        }
     }
 }
