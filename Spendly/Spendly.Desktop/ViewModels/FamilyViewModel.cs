@@ -19,6 +19,12 @@ public partial class FamilyViewModel : ObservableObject
     [ObservableProperty] private string _newEmail    = string.Empty;
     [ObservableProperty] private string _addError    = string.Empty;
     [ObservableProperty] private string _addSuccess  = string.Empty;
+    [ObservableProperty] private string _actionError = string.Empty;
+
+    [ObservableProperty] private bool   _isJoinFormOpen;
+    [ObservableProperty] private string _joinToken   = string.Empty;
+    [ObservableProperty] private string _joinError   = string.Empty;
+    [ObservableProperty] private string _joinSuccess = string.Empty;
 
     public string  CurrencySymbol => _data.CurrencySymbol;
     public decimal ExchangeRate   => _data.ExchangeRate;
@@ -39,6 +45,17 @@ public partial class FamilyViewModel : ObservableObject
         NewEmail   = string.Empty;
         AddError   = string.Empty;
         AddSuccess = string.Empty;
+        if (IsAddFormOpen) IsJoinFormOpen = false;
+    }
+
+    [RelayCommand]
+    private void ToggleJoinForm()
+    {
+        IsJoinFormOpen = !IsJoinFormOpen;
+        JoinToken   = string.Empty;
+        JoinError   = string.Empty;
+        JoinSuccess = string.Empty;
+        if (IsJoinFormOpen) IsAddFormOpen = false;
     }
 
     private static bool IsValidEmail(string email)
@@ -53,16 +70,25 @@ public partial class FamilyViewModel : ObservableObject
         {
             return hre.StatusCode switch
             {
-                HttpStatusCode.NotFound            => "Korisnik s tim emailom nije pronađen.",
-                HttpStatusCode.BadRequest          => "Neispravni podaci. Provjerite email adresu.",
+                HttpStatusCode.NotFound            => ServerMessage(hre) ?? "Korisnik nije pronađen.",
+                HttpStatusCode.BadRequest          => ServerMessage(hre) ?? "Neispravan zahtjev.",
                 HttpStatusCode.Conflict            => "Korisnik je već član ili je pozivnica već poslana.",
-                HttpStatusCode.Forbidden           => "Nemate ovlasti za ovu radnju.",
+                HttpStatusCode.Forbidden           => ServerMessage(hre) ?? "Nemate ovlasti za ovu radnju.",
                 HttpStatusCode.Unauthorized        => "Nemate ovlasti za ovu radnju.",
                 HttpStatusCode.InternalServerError => "Greška na poslužitelju. Pokušajte ponovo.",
                 _                                  => "Neočekivana greška. Pokušajte ponovo."
             };
         }
         return "Neočekivana greška. Pokušajte ponovo.";
+    }
+
+    // ApiService baca HttpRequestException s tijelom odgovora kao porukom.
+    // Vraćamo tu poruku ako je čitljiv tekst (ne JSON).
+    private static string? ServerMessage(HttpRequestException hre)
+    {
+        var body = hre.Message?.Trim();
+        if (string.IsNullOrEmpty(body) || body.StartsWith('{') || body.StartsWith('[')) return null;
+        return body;
     }
 
     [RelayCommand]
@@ -94,14 +120,105 @@ public partial class FamilyViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task JoinGroup()
+    {
+        JoinError   = string.Empty;
+        JoinSuccess = string.Empty;
+
+        var token = JoinToken?.Trim() ?? string.Empty;
+        if (token.Length == 0) { JoinError = "Unesite token pozivnice."; return; }
+
+        try
+        {
+            // Postojeći endpoint: token se prosljeđuje kao query parametar.
+            await _api.PostAsync<object, ApiUserGroup>(
+                $"/api/Invitation/ClaimInvitation?token={Uri.EscapeDataString(token)}",
+                new { });
+
+            await RefreshGroupsAndData();
+
+            JoinSuccess    = "Uspješno ste se pridružili grupi.";
+            JoinToken      = string.Empty;
+            IsJoinFormOpen = false;
+        }
+        catch (Exception ex)
+        {
+            JoinError = TranslateJoinError(ex);
+        }
+    }
+
+    // Nakon pridruživanja ponovno razriješi grupe i učitaj podatke.
+    private async Task RefreshGroupsAndData()
+    {
+        var allGroups    = await _api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
+        var personal     = allGroups.FirstOrDefault(g => g.IsPersonal);
+        var familyGroups = allGroups.Where(g => !g.IsPersonal).OrderBy(g => g.Id).ToArray();
+
+        if (personal != null)
+        {
+            _api.PersonalGroupId     = personal.GroupId;
+            _api.PersonalUserGroupId = personal.Id;
+        }
+        if (familyGroups.Length > 0)
+        {
+            _api.FamilyGroupId     = familyGroups[0].GroupId;
+            _api.FamilyUserGroupId = familyGroups[0].Id;
+        }
+
+        await _data.LoadFromApiAsync(_api);
+    }
+
+    private static string TranslateJoinError(Exception ex)
+    {
+        if (ex is HttpRequestException hre)
+        {
+            var msg = ServerMessage(hre);
+            if (msg != null)
+            {
+                var lower = msg.ToLowerInvariant();
+                if (lower.Contains("invalid token"))                return "Neispravan token pozivnice.";
+                if (lower.Contains("not sent to your account"))     return "Ova pozivnica nije poslana na vaš račun.";
+                if (lower.Contains("expired"))                      return "Pozivnica je istekla.";
+                if (lower.Contains("already used"))                 return "Pozivnica je već iskorištena.";
+                if (lower.Contains("already in group"))             return "Već ste član ove grupe.";
+                if (lower.Contains("already a member of a family")) return "Već ste član obiteljske grupe. Napustite je prije pridruživanja novoj.";
+                return msg;
+            }
+        }
+        return FriendlyError(ex);
+    }
+
+    [RelayCommand]
     private void RequestDeleteMember(FamilyMember member)
     {
+        ActionError = string.Empty;
         foreach (var m in _data.FamilyMembers) m.IsConfirmingDelete = false;
         member.IsConfirmingDelete = true;
     }
 
     [RelayCommand]
-    private void ConfirmDeleteMember(FamilyMember member) => _data.FamilyMembers.Remove(member);
+    private async Task ConfirmDeleteMember(FamilyMember member)
+    {
+        ActionError = string.Empty;
+
+        if (member.IsCurrentUser)
+        {
+            member.IsConfirmingDelete = false;
+            ActionError = "Ne možete ukloniti sami sebe iz grupe.";
+            return;
+        }
+
+        try
+        {
+            await _api.DeleteAsync($"/api/UserGroup/RemoveMember/{member.UserGroupId}");
+            _data.FamilyMembers.Remove(member);
+        }
+        catch (Exception ex)
+        {
+            member.IsConfirmingDelete = false;
+            ActionError = FriendlyError(ex);
+        }
+    }
 
     [RelayCommand]
     private void CancelDeleteMember(FamilyMember member) => member.IsConfirmingDelete = false;
