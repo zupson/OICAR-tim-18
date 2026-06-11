@@ -49,9 +49,13 @@ public partial class LoginViewModel : ObservableObject
             _api.Username  = response.User.Username;
 
             // Login response has empty Groups — fetch them separately
-            var allGroups    = await _api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
-            var personal     = allGroups.FirstOrDefault(g => g.IsPersonal);
-            var familyGroups = allGroups.Where(g => !g.IsPersonal).OrderBy(g => g.Id).ToArray();
+            var allGroups = await _api.GetAsync<ApiUserGroup[]>("/api/UserGroup/GetAllUserGroups") ?? [];
+
+            // Osobna grupa je ona s IsPersonal = true; ako nijedna nije označena
+            // (starije/rubni podatci), uzmi grupu s najmanjim Id kao osobnu.
+            var personal = allGroups.FirstOrDefault(g => g.IsPersonal)
+                           ?? allGroups.OrderBy(g => g.Id).FirstOrDefault();
+            var familyGroups = allGroups.Where(g => g != personal).OrderBy(g => g.Id).ToArray();
 
             if (personal != null)
             {

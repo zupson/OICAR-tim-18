@@ -158,6 +158,15 @@ public partial class CategoriesViewModel : ObservableObject
     [RelayCommand]
     private void RequestDeleteCategory(CategoryItem item)
     {
+        DeleteError = string.Empty;
+
+        // Kategoriju nije moguće obrisati ako ima vezane transakcije.
+        if (item.Count > 0)
+        {
+            DeleteError = $"Kategoriju \"{item.Name}\" nije moguće obrisati jer ima {item.Count} vezanih transakcija. Prvo obrišite ili premjestite te transakcije.";
+            return;
+        }
+
         _pendingDeleteTypeId = item.TypeId;
         Rebuild();
     }
@@ -206,6 +215,12 @@ public partial class CategoriesViewModel : ObservableObject
     {
         DeleteError = string.Empty;
         _pendingDeleteTypeId = -1;
+
+        if (item.Count > 0)
+        {
+            DeleteError = $"Kategoriju \"{item.Name}\" nije moguće obrisati jer ima vezane transakcije.";
+            return;
+        }
 
         var tombstone = $"__deleted_{item.TypeId}";
         try

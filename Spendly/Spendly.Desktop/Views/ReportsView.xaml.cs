@@ -1,5 +1,7 @@
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Spendly.Desktop.ViewModels;
 
@@ -24,7 +26,22 @@ public partial class ReportsView : UserControl
     private void Form_KeyDown(object sender, KeyEventArgs e)
     {
         if (DataContext is not ReportsViewModel vm) return;
-        if (e.Key == Key.Enter)  vm.AddTransactionCommand.Execute(null);
+        if (e.Key == Key.Enter)
+        {
+            // Enter unutar DatePickera potvrđuje upisani datum — ne šalji formu.
+            if (IsWithinDatePicker(e.OriginalSource as DependencyObject)) return;
+            vm.AddTransactionCommand.Execute(null);
+        }
         if (e.Key == Key.Escape) vm.ToggleAddFormCommand.Execute(null);
+    }
+
+    private static bool IsWithinDatePicker(DependencyObject? source)
+    {
+        while (source != null)
+        {
+            if (source is DatePicker) return true;
+            source = source is Visual ? VisualTreeHelper.GetParent(source) : null;
+        }
+        return false;
     }
 }
