@@ -364,12 +364,12 @@
                             <TextBlock Text="Obiteljski" FontSize="12" FontWeight="SemiBold"
                                        Foreground="{StaticResource AccentAmberBrush}"/>
                         </Border>
-                        <TextBlock Text="Rashodi ovog mjeseca" FontSize="16" FontWeight="SemiBold"
+                        <TextBlock Text="Rashodi" FontSize="16" FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <TextBlock Text="Nema obiteljskih rashoda ovog mjeseca."
+                    <TextBlock Text="Nema obiteljskih rashoda."
                                Visibility="{Binding HasNoFamilyTransactions, Converter={StaticResource BoolToVisibility}}"
                                FontSize="13" Foreground="{StaticResource TextMutedBrush}"
                                HorizontalAlignment="Center" Margin="0,0,0,8"/>

@@ -117,15 +117,10 @@ public partial class BudgetViewModel : ObservableObject
     public decimal ExchangeRate   => _data.ExchangeRate;
     public bool    HasNoBudgets   => Budgets.Count == 0;
 
-    private static readonly int _thisMonth = DateTime.Now.Month;
-    private static readonly int _thisYear  = DateTime.Now.Year;
-
     public IEnumerable<Transaction> FamilyRecentTransactions =>
         _data.Transactions
             .Where(t => t.Type  == TransactionType.Expense &&
-                        t.Scope == TransactionScope.Family &&
-                        t.Date.Month == _thisMonth &&
-                        t.Date.Year  == _thisYear)
+                        t.Scope == TransactionScope.Family)
             .OrderByDescending(t => t.Date)
             .Take(5);
 
@@ -135,9 +130,7 @@ public partial class BudgetViewModel : ObservableObject
         {
             var groups = _data.Transactions
                 .Where(t => t.Type  == TransactionType.Expense &&
-                            t.Scope == TransactionScope.Family &&
-                            t.Date.Month == _thisMonth &&
-                            t.Date.Year  == _thisYear)
+                            t.Scope == TransactionScope.Family)
                 .GroupBy(t => t.Category)
                 .Select(g => (Category: g.Key, Total: g.Sum(t => t.Amount)))
                 .OrderByDescending(x => x.Total)
